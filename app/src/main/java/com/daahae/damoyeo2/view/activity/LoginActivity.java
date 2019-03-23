@@ -37,17 +37,12 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btnGuestLogin;
-    private Context context;
 
     private SignInButton signInButton;
     private GoogleSignInClient googleSignInClient;
     private GoogleApiClient googleApiClient;
 
     private FirebaseAuth mAuth;
-
-    public LoginActivity(){
-        context = this;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if(resultCode == Constant.LOG_OUT) {
                 //FirebaseAuth.getInstance().signOut();
                 signOut();
-                Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -149,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // 게스트 로그인
     private void guestSignIn(){
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         intent.putExtra(Constant.LOGIN, Constant.GUEST_LOGIN);
         startActivityForResult(intent, Constant.GUEST_LOGIN);
     }
@@ -167,9 +162,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(Constant.TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(context, "안녕하세요, "+user.getDisplayName() + "님", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "안녕하세요, "+user.getDisplayName() + "님", Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
                             intent.putExtra(Constant.LOGIN, Constant.GOOGLE_LOGIN);
                             startActivityForResult(intent, Constant.GOOGLE_LOGIN);
                         } else {

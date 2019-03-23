@@ -1,7 +1,6 @@
-package com.daahae.damoyeo2.view.fragment;
+package com.daahae.damoyeo2.view.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,20 +9,18 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -48,8 +45,6 @@ import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.presenter.CategoryPresenter;
 import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.activity.MainActivity;
-import com.daahae.damoyeo2.view.activity.TransportActivity;
 import com.daahae.damoyeo2.view.adapter.BuildingAdapter;
 import com.daahae.damoyeo2.view.adapter.MarkerTimeAdapter;
 import com.google.android.gms.common.ConnectionResult;
@@ -73,12 +68,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
-@SuppressLint("ValidFragment")
-public class CategoryFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener, View.OnTouchListener
-, SlidingDrawer.OnDrawerOpenListener, SlidingDrawer.OnDrawerCloseListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CategoryActivity
+        extends AppCompatActivity
+        implements View.OnClickListener, View.OnTouchListener, AdapterView.OnItemClickListener, SlidingDrawer.OnDrawerOpenListener, SlidingDrawer.OnDrawerCloseListener,
+                    OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-    private MainActivity parentView;
     private CategoryPresenter presenter;
 
     private MapView mapView = null;
@@ -118,10 +112,6 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
 
     private Button btnSortScore, btnSortDistance;
 
-    public CategoryFragment(MainActivity parentView) {
-        this.parentView = parentView;
-    }
-
     public ListView getListMarkerTime() {
         return listMarkerTime;
     }
@@ -143,21 +133,15 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_category);
 
         presenter = new CategoryPresenter(this);
         markerTimeAdapter = new MarkerTimeAdapter();
         buildingAdapter = new BuildingAdapter();
-    }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = (View) inflater.inflate(R.layout.fragment_category, container, false);
-
-        initView(rootView);
+        initView();
         initListener();
 
         setLoadingAnimation();
@@ -167,47 +151,49 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
 
         presenter.startCallback();
 
-        return rootView;
+        MapsInitializer.initialize(getApplicationContext());
+        if(mapView != null)
+            mapView.onCreate(savedInstanceState);
     }
 
-    private void initView(View rootView){
+    private void initView(){
 
-        relativeMap = rootView.findViewById(R.id.relative_map);
-        mapView = rootView.findViewById(R.id.map_category);
+        relativeMap = findViewById(R.id.relative_map);
+        mapView = findViewById(R.id.map_category);
         mapView.getMapAsync(this);
-        fabMid = rootView.findViewById(R.id.fab_mid);
+        fabMid = findViewById(R.id.fab_mid);
 
-        btnBack = rootView.findViewById(R.id.btn_back_category);
-        listMarkerTime = rootView.findViewById(R.id.list_marker_time);
-        btnAllMarkerList = rootView.findViewById(R.id.btn_all_marker_list);
+        btnBack = findViewById(R.id.btn_back_category);
+        listMarkerTime = findViewById(R.id.list_marker_time);
+        btnAllMarkerList = findViewById(R.id.btn_all_marker_list);
 
-        listCategory = rootView.findViewById(R.id.list_category);
+        listCategory = findViewById(R.id.list_category);
 
-        linearContent = rootView.findViewById(R.id.content);
+        linearContent = findViewById(R.id.content);
 
-        linearHandleMenu = rootView.findViewById(R.id.linear_handle_menu);
-        linearMarkerTime = rootView.findViewById(R.id.linear_marker_time);
-        slidingDrawer = rootView.findViewById(R.id.slide);
+        linearHandleMenu = findViewById(R.id.linear_handle_menu);
+        linearMarkerTime = findViewById(R.id.linear_marker_time);
+        slidingDrawer = findViewById(R.id.slide);
 
-        btnDownSlidingDrawer = rootView.findViewById(R.id.btn_down_sliding_drawer_category);
-        btnDepartment = rootView.findViewById(R.id.btn_department_store_category);
-        btnShopping = rootView.findViewById(R.id.btn_shopping_category);
-        btnStadium = rootView.findViewById(R.id.btn_stadium_category);
-        btnZoo = rootView.findViewById(R.id.btn_zoo_category);
-        btnMuseum = rootView.findViewById(R.id.btn_museum_category);
-        btnTheater = rootView.findViewById(R.id.btn_theater_category);
-        btnAquarium = rootView.findViewById(R.id.btn_aquarium_store_category);
-        btnCafe = rootView.findViewById(R.id.btn_cafe_category);
-        btnDrink = rootView.findViewById(R.id.btn_drink_category);
-        btnRestaurant = rootView.findViewById(R.id.btn_restaurant_store_category);
-        btnEtc = rootView.findViewById(R.id.btn_etc_category);
+        btnDownSlidingDrawer = findViewById(R.id.btn_down_sliding_drawer_category);
+        btnDepartment = findViewById(R.id.btn_department_store_category);
+        btnShopping = findViewById(R.id.btn_shopping_category);
+        btnStadium = findViewById(R.id.btn_stadium_category);
+        btnZoo = findViewById(R.id.btn_zoo_category);
+        btnMuseum = findViewById(R.id.btn_museum_category);
+        btnTheater = findViewById(R.id.btn_theater_category);
+        btnAquarium = findViewById(R.id.btn_aquarium_store_category);
+        btnCafe = findViewById(R.id.btn_cafe_category);
+        btnDrink = findViewById(R.id.btn_drink_category);
+        btnRestaurant = findViewById(R.id.btn_restaurant_store_category);
+        btnEtc = findViewById(R.id.btn_etc_category);
 
-        txtSelectedCategory = rootView.findViewById(R.id.txt_selected_category);
-        txtDefault = rootView.findViewById(R.id.txt_list_category_default);
-        imgLoading = rootView.findViewById(R.id.img_loading_category);
+        txtSelectedCategory = findViewById(R.id.txt_selected_category);
+        txtDefault = findViewById(R.id.txt_list_category_default);
+        imgLoading = findViewById(R.id.img_loading_category);
 
-        btnSortScore = rootView.findViewById(R.id.btn_score_sort_building);
-        btnSortDistance = rootView.findViewById(R.id.btn_distance_sort_building);
+        btnSortScore = findViewById(R.id.btn_score_sort_building);
+        btnSortDistance = findViewById(R.id.btn_distance_sort_building);
     }
 
     private void initListener(){
@@ -251,7 +237,7 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
 
 
     private void setLoadingAnimation(){
-        Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.loading);
+        Animation anim = AnimationUtils.loadAnimation(this, R.anim.loading);
         imgLoading.setAnimation(anim);
     }
 
@@ -278,52 +264,43 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        MapsInitializer.initialize(getActivity().getApplicationContext());
-        if(mapView != null)
-            mapView.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         mapView.onStart();
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         mapView.onStop();
 
-        if ( googleApiClient != null && googleApiClient.isConnected())
+        if (googleApiClient != null && googleApiClient.isConnected())
             googleApiClient.disconnect();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         mapView.onResume();
 
-        if ( googleApiClient != null)
+        if (googleApiClient != null)
             googleApiClient.connect();
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         mapView.onPause();
 
-        if ( googleApiClient != null && googleApiClient.isConnected()) {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-            googleApiClient.stopAutoManage(getActivity());
+            googleApiClient.stopAutoManage(this);
             googleApiClient.disconnect();
         }
     }
@@ -335,15 +312,15 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
 
-        if ( googleApiClient != null ) {
+        if (googleApiClient != null ) {
             googleApiClient.unregisterConnectionCallbacks(this);
             googleApiClient.unregisterConnectionFailedListener(this);
 
-            if ( googleApiClient.isConnected()) {
+            if (googleApiClient.isConnected()) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 googleApiClient.disconnect();
             }
@@ -351,20 +328,16 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
     }
 
     public boolean checkLocationServicesStatus() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    public MainActivity getParentView() {
-        return parentView;
-    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if ( !checkLocationServicesStatus()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("위치 서비스 비활성화");
             builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" +
                     "위치 설정을 수정하십시오.");
@@ -392,7 +365,7 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
         locationRequest.setFastestInterval(Constant.FASTEST_UPDATE_INTERVAL_MS);
 
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ( ActivityCompat.checkSelfPermission(getActivity(),
+            if ( ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                 LocationServices.FusedLocationApi
@@ -418,30 +391,30 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-        Toast.makeText(getActivity(), "위치정보 가져올 수 없음\n위치 퍼미션과 GPS활성 여부 확인", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "위치정보 가져올 수 없음\n위치 퍼미션과 GPS활성 여부 확인", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onLocationChanged(Location location) {
         Log.i(Constant.TAG, "onLocationChanged call..");
 
-        if(MainActivity.LOGIN_FLG == Constant.GOOGLE_LOGIN) {
+        if(MapsActivity.LOGIN_FLG == Constant.GOOGLE_LOGIN) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
-                getActivity().setResult(Constant.LOG_OUT);
-                getActivity().finish();
+                setResult(Constant.LOG_OUT);
+                finish();
             }
         }
     }
     private void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+        googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
+                .enableAutoManage(this, this)
                 .build();
         googleApiClient.connect();
     }
@@ -452,10 +425,10 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
         this.googleMap = googleMap;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+            int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
             if ( hasFineLocationPermission == PackageManager.PERMISSION_DENIED) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             } else {
                 if ( googleApiClient == null)
                     buildGoogleApiClient();
@@ -532,10 +505,11 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         if(parent.equals(listMarkerTime)){
-            Intent intent = new Intent(getActivity(), TransportActivity.class);
+            Intent intent = new Intent(this, TransportActivity.class);
             startActivityForResult(intent, Constant.CATEGORY_PAGE);
         } else {
-            parentView.changeView(Constant.DETAIL_PAGE);
+            Intent intent = new Intent(CategoryActivity.this, DetailActivity.class);
+            startActivity(intent);
             presenter.getBuildingDetailFromServer(position);
         }
     }
@@ -545,7 +519,7 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
         switch(view.getId()){
             case R.id.btn_back_category:
                 totalTimes.clear();
-                parentView.changeView(Constant.MAPS_PAGE);
+                finish();
                 Constant.existLandmarkTransport = false;
                 break;
             case R.id.btn_all_marker_list:
@@ -785,7 +759,7 @@ public class CategoryFragment extends Fragment implements View.OnClickListener, 
 
     public void initMarkerTime(ArrayList<String> totalTimes){
         this.totalTimes = totalTimes;
-        Log.v("시간",this.totalTimes.toString());
+        // Log.v("시간",this.totalTimes.toString());
     }
 
     public void setMarkerTimeList(MarkerTimeAdapter markerTimeAdapter) {

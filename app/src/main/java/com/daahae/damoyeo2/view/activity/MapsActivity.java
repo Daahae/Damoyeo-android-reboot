@@ -1,7 +1,8 @@
-package com.daahae.damoyeo2.view.fragment;
+package com.daahae.damoyeo2.view.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,21 +13,17 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -37,8 +34,6 @@ import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
 import com.daahae.damoyeo2.presenter.MapsPresenter;
 import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.activity.MainActivity;
-import com.daahae.damoyeo2.view.activity.MyPageActivity;
 import com.daahae.damoyeo2.view.function.GPSInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -47,6 +42,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdate;
@@ -67,11 +63,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressLint("ValidFragment")
-public class MapsFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity
+        extends AppCompatActivity
+        implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+                    com.google.android.gms.location.LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
 
-    private MainActivity parentView;
+    public static int LOGIN_FLG = Constant.GUEST_LOGIN;
+
     private MapsPresenter presenter;
 
     private GoogleMap googleMap = null;
@@ -90,68 +88,62 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
 
     private Geocoder geocoder;
 
-    public MapsFragment(MainActivity parentView) {
-        this.parentView = parentView;
-    }
-
-    public MainActivity getParentView() {
-        return parentView;
-    }
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
-        gps = new GPSInfo(getActivity());
+        // set LoginFlg
+        LOGIN_FLG = getIntent().getIntExtra(Constant.LOGIN, Constant.GUEST_LOGIN);
+
+        Constant.context = this;
+
+        gps = new GPSInfo(this);
         markerList = new ArrayList<Marker>();
         fabtn = new FloatingActionBtn();
 
-        geocoder = new Geocoder(getActivity());
+        geocoder = new Geocoder(this);
         presenter = new MapsPresenter(this);
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_maps, container, false);
-
-        initView(view);
+        initView();
         initAnimation();
         initListenter();
 
-        setPlaceAutoComplete();
+        MapsInitializer.initialize(getApplicationContext());
+        if(mapView != null)
+            mapView.onCreate(savedInstanceState);
 
-        return view;
+        setPlaceAutoComplete();
     }
 
-    private void initView(View view) {
+    private void initView() {
 
-        mapView = (MapView) view.findViewById(R.id.map_main);
+        mapView = (MapView) findViewById(R.id.map_main);
         mapView.getMapAsync(this);
 
-        fabtn.setFabMenu((FloatingActionButton) view.findViewById(R.id.fab_menu));
-        fabtn.setFabGPS((FloatingActionButton) view.findViewById(R.id.fab_gps));
-        fabtn.setFabPick((FloatingActionButton) view.findViewById(R.id.fab_pick));
-        fabtn.setFabClear((FloatingActionButton) view.findViewById(R.id.fab_clear));
-        fabtn.setFabFull((FloatingActionButton) view.findViewById(R.id.fab_full));
-        fabtn.setFabFix((FloatingActionButton) view.findViewById(R.id.fab_fix));
-        fabtn.setFabLogout((FloatingActionButton) view.findViewById(R.id.fab_logout));
-        fabtn.setFabMypage((FloatingActionButton) view.findViewById(R.id.fab_mypage));
+        fabtn.setFabMenu((FloatingActionButton) findViewById(R.id.fab_menu));
+        fabtn.setFabGPS((FloatingActionButton) findViewById(R.id.fab_gps));
+        fabtn.setFabPick((FloatingActionButton) findViewById(R.id.fab_pick));
+        fabtn.setFabClear((FloatingActionButton) findViewById(R.id.fab_clear));
+        fabtn.setFabFull((FloatingActionButton) findViewById(R.id.fab_full));
+        fabtn.setFabFix((FloatingActionButton) findViewById(R.id.fab_fix));
+        fabtn.setFabLogout((FloatingActionButton) findViewById(R.id.fab_logout));
+        fabtn.setFabMypage((FloatingActionButton) findViewById(R.id.fab_mypage));
 
         // 게스트 로그인 시 마이페이지 안보임
-        if(MainActivity.LOGIN_FLG == Constant.GUEST_LOGIN) {
+        if(LOGIN_FLG == Constant.GUEST_LOGIN) {
             fabtn.getFabMypage().setVisibility(View.GONE);
             // TODO 로그인 버튼 필요
             fabtn.getFabLogout().setImageDrawable(getResources().getDrawable(R.drawable.ic_logout, null));
         }
 
-        linearBtnSearchMid = view.findViewById(R.id.linear_search_mid);
+        linearBtnSearchMid = findViewById(R.id.linear_search_mid);
     }
 
     private void initAnimation() {
 
-        fabtn.setFabOpen(AnimationUtils.loadAnimation(getActivity(), R.anim.fab_open));
-        fabtn.setFabClose(AnimationUtils.loadAnimation(getActivity(), R.anim.fab_close));
+        fabtn.setFabOpen(AnimationUtils.loadAnimation(this, R.anim.fab_open));
+        fabtn.setFabClose(AnimationUtils.loadAnimation(this, R.anim.fab_close));
     }
 
     private void initListenter() {
@@ -171,11 +163,8 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
     // 구글 자동완성
     private void setPlaceAutoComplete() {
 
-        SupportPlaceAutocompleteFragment autocompleteFragment = new SupportPlaceAutocompleteFragment();
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_content, autocompleteFragment);
-        ft.commit();
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -193,52 +182,44 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        MapsInitializer.initialize(getActivity().getApplicationContext());
-        if(mapView != null)
-            mapView.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         mapView.onStart();
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
+
         mapView.onStop();
 
-        if ( googleApiClient != null && googleApiClient.isConnected())
+        if (googleApiClient != null && googleApiClient.isConnected())
             googleApiClient.disconnect();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         mapView.onResume();
 
-        if ( googleApiClient != null)
+        if (googleApiClient != null)
             googleApiClient.connect();
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         mapView.onPause();
 
-        if ( googleApiClient != null && googleApiClient.isConnected()) {
+        if (googleApiClient != null && googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-            googleApiClient.stopAutoManage(getActivity());
+            googleApiClient.stopAutoManage(this);
             googleApiClient.disconnect();
         }
     }
@@ -250,11 +231,11 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
 
-        if ( googleApiClient != null ) {
+        if (googleApiClient != null ) {
             googleApiClient.unregisterConnectionCallbacks(this);
             googleApiClient.unregisterConnectionFailedListener(this);
 
@@ -266,7 +247,7 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
     }
 
     public boolean checkLocationServicesStatus() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -275,7 +256,7 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if ( !checkLocationServicesStatus()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("위치 서비스 비활성화");
             builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" +
                     "위치 설정을 수정하십시오.");
@@ -303,7 +284,7 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
         locationRequest.setFastestInterval(Constant.FASTEST_UPDATE_INTERVAL_MS);
 
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ( ActivityCompat.checkSelfPermission(getActivity(),
+            if ( ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                 LocationServices.FusedLocationApi
@@ -336,24 +317,24 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
     @Override
     public void onLocationChanged(Location location) {
         Log.i(Constant.TAG, "onLocationChanged call..");
-        if(MainActivity.LOGIN_FLG == Constant.GOOGLE_LOGIN) {
+        if(LOGIN_FLG == Constant.GOOGLE_LOGIN) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
-                getActivity().setResult(Constant.LOG_OUT);
-                getActivity().finish();
+                setResult(Constant.LOG_OUT);
+                finish();
             }
         }
     }
 
     private void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+        googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
+                .enableAutoManage(this, this)
                 .build();
         googleApiClient.connect();
     }
@@ -363,10 +344,10 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
         this.googleMap = googleMap;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+            int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
             if ( hasFineLocationPermission == PackageManager.PERMISSION_DENIED)
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             else {
                 if ( googleApiClient == null)
                     buildGoogleApiClient();
@@ -413,11 +394,11 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
         switch (v.getId()) {
 
             case R.id.fab_logout:
-                getActivity().setResult(Constant.LOG_OUT);
-                getActivity().finish();
+                setResult(Constant.LOG_OUT);
+                finish();
                 break;
             case R.id.fab_mypage:
-                Intent intent = new Intent(getActivity(), MyPageActivity.class);
+                Intent intent = new Intent(this, MyPageActivity.class);
                 startActivity(intent);
             case R.id.fab_menu:
                 fabtn.anim();
@@ -498,7 +479,7 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
             LatLng latLng = new LatLng(latitude, longitude);
             setCurrentMarker(true, latLng, getResources().getString(R.string.msg_add), null);
         } else
-            Toast.makeText(getActivity(),  getResources().getString(R.string.msg_gps_disable), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,  getResources().getString(R.string.msg_gps_disable), Toast.LENGTH_SHORT).show();
     }
 
     // 지도에 직접 지정을 통한 마커 추가
@@ -543,7 +524,7 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
                 currentMarker = null;
             }
             else
-                Toast.makeText(getActivity(), getResources().getString(R.string.msg_checkmarker), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.msg_checkmarker), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -562,7 +543,7 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
 
         builder.include(marker.getPosition());
 
-        Toast.makeText(getActivity(), person.getName() + getResources().getString(R.string.msg_savemarker), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, person.getName() + getResources().getString(R.string.msg_savemarker), Toast.LENGTH_SHORT).show();
     }
 
     // 마커 삭제
@@ -571,7 +552,7 @@ public class MapsFragment extends Fragment implements View.OnClickListener, OnMa
         markerList.remove(targetIndex);
         ArrayList<Person> personList = Person.getInstance();
         Person person = personList.remove(targetIndex);
-        Toast.makeText(getActivity(), person.getName() + getResources().getString(R.string.msg_removemarker), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, person.getName() + getResources().getString(R.string.msg_removemarker), Toast.LENGTH_SHORT).show();
         clickedMarker.remove();
     }
 

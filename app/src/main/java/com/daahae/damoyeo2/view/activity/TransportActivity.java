@@ -13,7 +13,6 @@ import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.TransportInfoList;
 import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
 import com.daahae.damoyeo2.view.adapter.TransportAdapter;
-import com.daahae.damoyeo2.view.fragment.CategoryFragment;
 
 public class TransportActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
@@ -35,7 +34,7 @@ public class TransportActivity extends AppCompatActivity implements View.OnClick
         listTransport = findViewById(R.id.list_transport_detail);
         btnBack = findViewById(R.id.btn_back_transport);
 
-        if(!CategoryFragment.isMid) {
+        if(!CategoryActivity.isMid) {
             transportAdapter = new TransportAdapter(TransportInfoList.getInstance().getUserArr(), Person.getInstance(), this);
         } else {
             transportAdapter = new TransportAdapter(TransportLandmarkInfoList.getInstance().getUserArr(), Person.getInstance(), this);
