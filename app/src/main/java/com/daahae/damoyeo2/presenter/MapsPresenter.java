@@ -1,5 +1,6 @@
 package com.daahae.damoyeo2.presenter;
 
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,16 +10,17 @@ import com.daahae.damoyeo2.exception.ExceptionHandle;
 import com.daahae.damoyeo2.exception.ExceptionService;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.fragment.MapsFragment;
+import com.daahae.damoyeo2.view.activity.CategoryActivity;
+import com.daahae.damoyeo2.view.activity.MapsActivity;
 
 import java.text.SimpleDateFormat;
 
 public class MapsPresenter {
 
-    private MapsFragment view;
+    private MapsActivity view;
     private ResentSearchDBHelper dbHelper;
 
-    public MapsPresenter(MapsFragment view){
+    public MapsPresenter(MapsActivity view){
         this.view = view;
         dbHelper = new ResentSearchDBHelper(Constant.context);
     }
@@ -33,11 +35,12 @@ public class MapsPresenter {
             ExceptionService.getInstance().isSetMarker(Person.getInstance().size());
         } catch (ExceptionHandle exceptionHandle) {
             exceptionHandle.printStackTrace();
-            Toast.makeText(view.getActivity(),exceptionHandle.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(view,exceptionHandle.getMessage(), Toast.LENGTH_SHORT).show();
         }
         if(Person.getInstance().size() > 1){
             RetrofitCommunication.getInstance().sendMarkerTimeMessage();
-            view.getParentView().changeView(Constant.CATEGORY_PAGE);
+            Intent intent = new Intent(view, CategoryActivity.class);
+            view.startActivity(intent);
         }
     }
 }

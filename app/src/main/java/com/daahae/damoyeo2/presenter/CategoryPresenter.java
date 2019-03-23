@@ -11,17 +11,17 @@ import com.daahae.damoyeo2.model.BuildingArr;
 import com.daahae.damoyeo2.model.TransportInfoList;
 import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
 import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.fragment.CategoryFragment;
+import com.daahae.damoyeo2.view.activity.CategoryActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class CategoryPresenter {
 
-    private CategoryFragment view;
+    private CategoryActivity view;
     private CheckTypesTask loading;
 
-    public CategoryPresenter(CategoryFragment view) {
+    public CategoryPresenter(CategoryActivity view) {
         this.view = view;
         loading = new CheckTypesTask();
         loading.execute();
@@ -29,7 +29,7 @@ public class CategoryPresenter {
 
     public void setSelectCategory(int category) {
         Log.d("start2", new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(System.currentTimeMillis()));
-        if(!CategoryFragment.isMid)
+        if(!CategoryActivity.isMid)
             RetrofitCommunication.getInstance().setBuildingsData(category);
         else
             RetrofitCommunication.getInstance().setBuildingsDataInLandmark(category);
@@ -100,7 +100,7 @@ public class CategoryPresenter {
             @Override
             public void disconnectServer() {
                 loading.onPostExecute(null);
-                view.getParentView().changeView(Constant.MAPS_PAGE); // 뒤로가기
+                view.finish(); // 뒤로가기
                 Toast.makeText(Constant.context,"중간지점 탐색에 실패했습니다", Toast.LENGTH_SHORT).show();
             }
         };
@@ -144,7 +144,7 @@ public class CategoryPresenter {
                 }
 
             } catch (InterruptedException e) {
-                view.getParentView().changeView(Constant.MAPS_PAGE);
+                view.finish();
                 e.printStackTrace();
             }
             return null;

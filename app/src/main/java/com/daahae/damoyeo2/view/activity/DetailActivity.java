@@ -1,7 +1,6 @@
-package com.daahae.damoyeo2.view.fragment;
+package com.daahae.damoyeo2.view.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,13 +14,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +30,6 @@ import com.daahae.damoyeo2.model.Landmark;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.presenter.DetailPresenter;
 import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.activity.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -52,12 +48,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-@SuppressLint("ValidFragment")
-public class DetailFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+public class DetailActivity
+        extends AppCompatActivity
+        implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private DetailPresenter presenter;
-    private MainActivity parentView;
 
     private GoogleMap googleMap = null;
     private MapView mapView = null;
@@ -70,43 +66,38 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
 
     private FloatingActionButton fabReset;
 
-    public DetailFragment(MainActivity parentView){
-        this.parentView = parentView;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detail);
+
         presenter = new DetailPresenter(this);
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = (View) inflater.inflate(R.layout.fragment_detail, container, false);
-
-        initView(view);
+        initView();
         initListener();
 
-        presenter.startCallback();
+        MapsInitializer.initialize(getApplicationContext());
 
-        return view;
+        if(mapView != null)
+            mapView.onCreate(savedInstanceState);
+
+        presenter.startCallback();
     }
 
-    private void initView(View view){
+    private void initView(){
 
-        mapView = view.findViewById(R.id.map_detail);
+        mapView = findViewById(R.id.map_detail);
         mapView.getMapAsync(this);
 
-        txtBuildingName = view.findViewById(R.id.txt_building_name_detail);
-        txtBuildingAddress = view.findViewById(R.id.txt_building_address_datail);
-        txtBuildingTel = view.findViewById(R.id.txt_building_tel_detail);
-        txtDescription = view.findViewById(R.id.txt_building_description_detail);
-        txtBuildingDistance = view.findViewById(R.id.txt_building_distance_detail);
+        txtBuildingName = findViewById(R.id.txt_building_name_detail);
+        txtBuildingAddress = findViewById(R.id.txt_building_address_datail);
+        txtBuildingTel = findViewById(R.id.txt_building_tel_detail);
+        txtDescription = findViewById(R.id.txt_building_description_detail);
+        txtBuildingDistance = findViewById(R.id.txt_building_distance_detail);
 
-        btnBack = view.findViewById(R.id.btn_back_building_transport);
+        btnBack = findViewById(R.id.btn_back_building_transport);
 
-        fabReset = view.findViewById(R.id.fab_reset);
+        fabReset = findViewById(R.id.fab_reset);
     }
 
     private void initListener(){
@@ -115,23 +106,13 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        MapsInitializer.initialize(getActivity().getApplicationContext());
-
-        if(mapView != null)
-            mapView.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         mapView.onStart();
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         mapView.onStop();
 
@@ -140,13 +121,13 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         mapView.onResume();
 
@@ -155,13 +136,13 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         mapView.onPause();
 
         if ( googleApiClient != null && googleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-            googleApiClient.stopAutoManage(getActivity());
+            googleApiClient.stopAutoManage(this);
             googleApiClient.disconnect();
         }
     }
@@ -173,7 +154,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
 
@@ -189,7 +170,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     }
 
     public boolean checkLocationServicesStatus() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -198,7 +179,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if ( !checkLocationServicesStatus()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("위치 서비스 비활성화");
             builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" +
                     "위치 설정을 수정하십시오.");
@@ -226,7 +207,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
         locationRequest.setFastestInterval(Constant.FASTEST_UPDATE_INTERVAL_MS);
 
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ( ActivityCompat.checkSelfPermission(getActivity(),
+            if ( ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                 LocationServices.FusedLocationApi
@@ -252,30 +233,31 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-        Toast.makeText(getActivity(), "위치정보 가져올 수 없음\n위치 퍼미션과 GPS활성 여부 확인", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "위치정보 가져올 수 없음\n위치 퍼미션과 GPS활성 여부 확인", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onLocationChanged(Location location) {
         Log.i(Constant.TAG, "onLocationChanged call..");
 
-        if(MainActivity.LOGIN_FLG == Constant.GOOGLE_LOGIN) {
+        if(MapsActivity.LOGIN_FLG == Constant.GOOGLE_LOGIN) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
-                getActivity().setResult(Constant.LOG_OUT);
-                getActivity().finish();
+                // TODO 스택에 쌓인 액티비티 전체 종료
+                setResult(Constant.LOG_OUT);
+                finish();
             }
         }
     }
 
     private void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+        googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(getActivity(), this)
+                .enableAutoManage(this, this)
                 .build();
         googleApiClient.connect();
     }
@@ -287,10 +269,10 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
         setLocation(Constant.DEFAULT_LOCATION);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+            int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
             if ( hasFineLocationPermission == PackageManager.PERMISSION_DENIED) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constant.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             } else {
                 if ( googleApiClient == null)
                     buildGoogleApiClient();
@@ -309,7 +291,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_back_building_transport:
-                parentView.backView(this);
+                finish();
                 break;
             case R.id.fab_reset:
                 showCurrentMarker();
@@ -347,7 +329,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener, On
 
         MarkerOptions markerOption = new MarkerOptions();
         // 이전페이지에서 중간지점 주변장소를 선택했다면
-        if(!CategoryFragment.isMid) {
+        if(!CategoryActivity.isMid) {
             markerOption.position(MidInfo.getInstance().getLatLng());
             markerOption.title(Constant.DEFAULT_MIDINFO_NAME);
         }

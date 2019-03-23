@@ -2,13 +2,13 @@ package com.daahae.damoyeo2.presenter;
 
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.BuildingDetail;
-import com.daahae.damoyeo2.view.fragment.DetailFragment;
+import com.daahae.damoyeo2.view.activity.DetailActivity;
 
 public class DetailPresenter {
 
-    private DetailFragment view;
+    private DetailActivity view;
 
-    public DetailPresenter(DetailFragment view) {
+    public DetailPresenter(DetailActivity view) {
         this.view = view;
     }
 
