@@ -5,10 +5,12 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class Data{
+public class SearchPubTransPath {
 
     @SerializedName("subPathArr")
-    private ArrayList<Transport> transportInfo;
+    private ArrayList<SubPath> subPathList;
+    @SerializedName("payment")
+    private int payment;
     @SerializedName("totalTime")
     private int totalTime;
     @SerializedName("timeBySubway")
@@ -20,8 +22,15 @@ public class Data{
     @SerializedName("error")
     private String error;
 
-    public ArrayList<Transport> getTransportInfo() {
-        return transportInfo;
+    private int totalHour;
+    private int totalMinute;
+
+    public ArrayList<SubPath> getSubPathList() {
+        return subPathList;
+    }
+
+    public int getPayment() {
+        return payment;
     }
 
     public int getTotalTime() {
@@ -42,5 +51,21 @@ public class Data{
 
     public String getError() {
         return error;
+    }
+
+    public int getTotalHour() {
+        return totalHour;
+    }
+
+    public int getTotalMinute() {
+        return totalMinute;
+    }
+
+    public void setTotalHour(int totalHour) {
+        this.totalHour = totalHour;
+    }
+
+    public void setTotalMinute(int totalMinute) {
+        this.totalMinute = totalMinute;
     }
 }

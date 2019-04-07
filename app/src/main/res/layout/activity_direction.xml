@@ -29,9 +29,10 @@
             android:src="@drawable/ic_main" />
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/list_transport_detail"
-        android:layout_width="fill_parent"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_direction"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="@color/walk"/>
 </LinearLayout>

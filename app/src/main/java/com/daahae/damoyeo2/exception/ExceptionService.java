@@ -3,7 +3,7 @@ package com.daahae.damoyeo2.exception;
 import com.daahae.damoyeo2.model.BuildingArr;
 import com.daahae.damoyeo2.model.BuildingDetail;
 import com.daahae.damoyeo2.model.BuildingRequest;
-import com.daahae.damoyeo2.model.TransportInfoList;
+import com.daahae.damoyeo2.model.TransPathList;
 import com.daahae.damoyeo2.model.UserRequest;
 import com.daahae.damoyeo2.view.Constant;
 
@@ -33,11 +33,11 @@ public class ExceptionService {
         }
     }
 
-    public void isExistTransportInformation(TransportInfoList transportInfoList) throws ExceptionHandle{
-        if(transportInfoList == null){
+    public void isExistTransportInformation(TransPathList transPathList) throws ExceptionHandle{
+        if(transPathList == null){
             throw new ExceptionHandle("서버에서 사용자 정보를 받아오지 못했습니다");
         }
-        else if (transportInfoList.getUserArr().size() <= 0) {
+        else if (transPathList.getUserArr().size() <= 0) {
             throw new ExceptionHandle("받아온 사용자의 정보가 없습니다");
         }
     }

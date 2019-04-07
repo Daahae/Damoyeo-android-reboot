@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.BuildingArr;
-import com.daahae.damoyeo2.model.TransportInfoList;
+import com.daahae.damoyeo2.model.TransPathList;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.activity.CategoryActivity;
 
@@ -37,8 +37,8 @@ public class CategoryPresenter {
 
     public void setMidInfoTransport(){
         ArrayList<String> totalTimes = new ArrayList<>();
-        for(int i = 0; i< TransportInfoList.getInstance().getUserArr().size(); i++){
-            totalTimes.add(String.valueOf(TransportInfoList.getInstance().getUserArr().get(i).getTotalTime()));
+        for(int i = 0; i< TransPathList.getInstance().getUserArr().size(); i++){
+            totalTimes.add(String.valueOf(TransPathList.getInstance().getUserArr().get(i).getTotalTime()));
         }
         view.initMarkerTime(totalTimes);
         view.setMarkerTimeList(view.getMarkerTimeAdapter());
