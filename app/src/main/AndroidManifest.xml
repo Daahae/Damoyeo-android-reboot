@@ -55,7 +55,6 @@
         <activity
             android:name=".view.activity.DetailActivity"
             android:configChanges="keyboardHidden|orientation" />
-        <activity android:name=".view.activity.MyPageActivity" />
         <activity android:name=".view.activity.DirectionActivity" />
     </application>
 

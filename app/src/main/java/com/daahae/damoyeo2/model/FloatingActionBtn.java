@@ -6,10 +6,8 @@ import android.view.animation.Animation;
 public class FloatingActionBtn {
     private Animation fabOpen, fabClose;
     private boolean isFabOpen = false;
-    private FloatingActionButton fabMenu, fabGPS, fabPick, fabClear, fabFull;
-    private FloatingActionButton fabFix;
+    private FloatingActionButton fabMenu, fabGPS, fabUser, fabFull;
     private FloatingActionButton fabLogout;
-    private FloatingActionButton fabMypage;
 
     public FloatingActionButton getFabMenu() {
         return fabMenu;
@@ -35,20 +33,12 @@ public class FloatingActionBtn {
         this.fabGPS = fabGPS;
     }
 
-    public FloatingActionButton getFabPick() {
-        return fabPick;
+    public FloatingActionButton getFabUser() {
+        return fabUser;
     }
 
-    public void setFabPick(FloatingActionButton fabPick) {
-        this.fabPick = fabPick;
-    }
-
-    public FloatingActionButton getFabClear() {
-        return fabClear;
-    }
-
-    public void setFabClear(FloatingActionButton fabClear) {
-        this.fabClear = fabClear;
+    public void setFabUser(FloatingActionButton fabUser) {
+        this.fabUser = fabUser;
     }
 
     public FloatingActionButton getFabFull() {
@@ -59,14 +49,6 @@ public class FloatingActionBtn {
         this.fabFull = fabFull;
     }
 
-    public FloatingActionButton getFabFix() {
-        return fabFix;
-    }
-
-    public void setFabFix(FloatingActionButton fabFix) {
-        this.fabFix = fabFix;
-    }
-
     public FloatingActionButton getFabLogout() {
         return fabLogout;
     }
@@ -75,33 +57,21 @@ public class FloatingActionBtn {
         this.fabLogout = fabLogout;
     }
 
-    public FloatingActionButton getFabMypage() {
-        return fabMypage;
-    }
-
-    public void setFabMypage(FloatingActionButton fabMypage) {
-        this.fabMypage = fabMypage;
-    }
-
     public void anim() {
         if (isFabOpen) {
             fabGPS.startAnimation(fabClose);
-            fabPick.startAnimation(fabClose);
-            fabClear.startAnimation(fabClose);
+            fabUser.startAnimation(fabClose);
             fabFull.startAnimation(fabClose);
             fabGPS.setClickable(false);
-            fabPick.setClickable(false);
-            fabClear.setClickable(false);
+            fabUser.setClickable(false);
             fabFull.setClickable(false);
             isFabOpen = false;
         } else {
             fabGPS.startAnimation(fabOpen);
-            fabPick.startAnimation(fabOpen);
-            fabClear.startAnimation(fabOpen);
+            fabUser.startAnimation(fabOpen);
             fabFull.startAnimation(fabOpen);
             fabGPS.setClickable(true);
-            fabPick.setClickable(true);
-            fabClear.setClickable(true);
+            fabUser.setClickable(true);
             fabFull.setClickable(true);
             isFabOpen = true;
         }

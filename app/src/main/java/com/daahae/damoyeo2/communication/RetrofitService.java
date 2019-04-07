@@ -9,6 +9,10 @@ import retrofit2.http.POST;
 
 public interface RetrofitService {
 
+    @FormUrlEncoded
+    @POST("renewPos")
+    Call<JsonObject> getUserLatLng(@Field("userPos") String user);
+
     //@Multipart
     @FormUrlEncoded
     @POST("usersToMid")

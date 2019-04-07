@@ -1,5 +1,6 @@
 package com.daahae.damoyeo2.communication;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -34,11 +35,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitCommunication {
 
+    private final String TAG = "RETROFIT_COMMUNICATION";
+
     private RetrofitService retrofitService;
     private Retrofit retrofit;
 
     private ArrayList<String> totalTimes;
-    private TransportInfoList transportList;
+    private TransPathList transportList;
     private BuildingArr buildingList;
     private BuildingDetail buildingDetail;
 
@@ -98,6 +101,46 @@ public class RetrofitCommunication {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+    }
+
+    public void sendUserPosForSync(UserPos userPos, final Handler handler){
+        String strMessage = userPos.toString();
+
+        final Call<JsonObject> comment = retrofitService.getUserLatLng(strMessage);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    JsonObject json = response.body();
+                    try {
+                        UserPos userPosList = new Gson().fromJson(json, UserPos.class);
+                        if (userPosList != null) {
+                            UserPos.getInstance().clear();
+                            for (UserPos user: userPosList.getUserPosList()) {
+                                UserPos.getInstance().add(user);
+                                Log.d(TAG, "userPos list" + user.toString());
+                            }
+                            if (userPosList.getUserPosList().size() > 0)
+                                handler.sendEmptyMessage(Constant.REQUEST_LOCATION_SYNC_SUCCESS);
+                            else
+                                handler.sendEmptyMessage(Constant.REQUEST_LOCATION_SYNC_NONE);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "callback error" + e.getMessage());
+                        handler.sendEmptyMessage(Constant.REQUEST_LOCATION_SYNC_FAIL);
+                    }
+                } else {
+                    Log.e(TAG, "response fail" + response.message());
+                    handler.sendEmptyMessage(Constant.REQUEST_LOCATION_SYNC_FAIL);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e(TAG, "enqueue fail" + t.getMessage());
+                handler.sendEmptyMessage(Constant.REQUEST_LOCATION_SYNC_FAIL);
+            }
+        });
     }
 
     private void sendPersonLocation(ArrayList<Person> persons){

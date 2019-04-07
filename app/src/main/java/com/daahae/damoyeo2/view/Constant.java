@@ -69,4 +69,9 @@ public class Constant {
     public static boolean existLandmarkTransport = false;
     public static boolean existTransport= false;
     public static boolean existBuilding = false;
+
+    // 2019.04.06 Inhyeok - request handler
+    public static final int REQUEST_LOCATION_SYNC_SUCCESS = 3001;
+    public static final int REQUEST_LOCATION_SYNC_NONE = 3004;
+    public static final int REQUEST_LOCATION_SYNC_FAIL = 3009;
 }
