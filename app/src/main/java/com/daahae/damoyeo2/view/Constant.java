@@ -6,8 +6,8 @@ import com.daahae.damoyeo2.model.Position;
 import com.google.android.gms.maps.model.LatLng;
 
 public class Constant {
-    public static final String TAG = "damoyeo_gmap";
-    public static final String URL = "http://13.125.192.103/";
+    public static final String TAG = "damoyeo_reboot";
+    public static final String URL = "http://54.180.106.100:3443/";
     public static final String ALGORITHM_ERROR = "{\"error\":\"Algorithm Error\"}";
 
     public static final int LOG_IN = 9001;
@@ -34,14 +34,6 @@ public class Constant {
     public static final double distance = 0;
 
     public static final String DEFAULT_MIDINFO_NAME = "중간지점";
-    public static final String DEFAULT_LANDMARK_NAME= "랜드마크";
-
-    public static final double landmark_latitude = 37.56318972577066;
-    public static final double landmark_longitude = 126.98734413832425;
-    public static final LatLng LANDMARK_LOCATION = new LatLng(landmark_latitude, landmark_longitude);
-    public static final String landmark_name = "명동성당";
-    public static final String landmark_address = "서울특별시 중구 저동1가 명동길 74";
-    public static final String landmark_tel = "02-774-1784";
 
     // MainActivity
     public static final int MAPS_PAGE = 101;

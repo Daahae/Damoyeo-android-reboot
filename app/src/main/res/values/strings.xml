@@ -25,4 +25,21 @@
     <string name="category_drink">술집</string>
     <string name="category_restaurant">식당</string>
     <string name="category_etc">기타</string>
+
+    <!-- item direction -->
+    <string name="tv_direction_total_time_text">40분</string>
+    <string name="tv_direction_walk_time_text">도보 10분</string>
+    <string name="tv_direction_divide_text">|</string>
+    <string name="tv_direction_cost_text">1,250원</string>
+    <string name="timer_finished">Timer Finished!</string>
+    <string name="lead_time">소요시간</string>
+    <string name="date">날짜</string>
+
+    <!-- item subpath -->
+    <string name="tv_transport_no_text">740</string>
+    <string name="tv_start_name_text">합정역</string>
+    <string name="tv_subpath_how_text">승차</string>
+    <string name="tv_arrow_text">  \u003E  </string>
+    <string name="tv_end_name_text">신분당선강남역</string>
+    <string name="tv_get_off_text">하차</string>
 </resources>

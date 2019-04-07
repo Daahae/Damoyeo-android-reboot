@@ -10,12 +10,11 @@ import com.daahae.damoyeo2.model.Building;
 import com.daahae.damoyeo2.model.BuildingArr;
 import com.daahae.damoyeo2.model.BuildingDetail;
 import com.daahae.damoyeo2.model.BuildingRequest;
-import com.daahae.damoyeo2.model.Data;
-import com.daahae.damoyeo2.model.Landmark;
+import com.daahae.damoyeo2.model.UserPos;
+import com.daahae.damoyeo2.model.SearchPubTransPath;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
-import com.daahae.damoyeo2.model.TransportInfoList;
-import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
+import com.daahae.damoyeo2.model.TransPathList;
 import com.daahae.damoyeo2.model.UserRequest;
 import com.daahae.damoyeo2.view.Constant;
 import com.google.android.gms.maps.model.LatLng;
@@ -42,12 +41,10 @@ public class RetrofitCommunication {
     private TransportInfoList transportList;
     private BuildingArr buildingList;
     private BuildingDetail buildingDetail;
-    private TransportLandmarkInfoList transportLandmarkInfoList;
 
     private UserCallBack userCallBack;
     private BuildingCallBack buildingCallBack;
     private BuildingDetailCallBack buildingDetailCallBack;
-    private UserLandmarkBack userLandmarkBack;
 
     private static RetrofitCommunication instance = new RetrofitCommunication();
 
@@ -68,12 +65,6 @@ public class RetrofitCommunication {
         void buildingDetailDataPath(BuildingDetail buildingDetail);
     }
 
-
-    public interface UserLandmarkBack {
-        void userLandmarkDataPath(ArrayList<String> totalTimes);
-        void disconnectServer();
-    }
-
     private RetrofitCommunication(){
         connectServer();
         init();
@@ -87,9 +78,6 @@ public class RetrofitCommunication {
     }
     public void setBuildingDetailData(BuildingDetailCallBack buildingDetailCallBack){
         this.buildingDetailCallBack = buildingDetailCallBack;
-    }
-    public void setUserLandmarkData(UserLandmarkBack userLandmarkBack){
-        this.userLandmarkBack = userLandmarkBack;
     }
 
     private void init() {
@@ -135,7 +123,7 @@ public class RetrofitCommunication {
                         if (userCallBack != null) userCallBack.disconnectServer();
                         Log.e("algorithm","알고리즘 오류");
                     }else {
-                        transportList = new Gson().fromJson(json, TransportInfoList.class);
+                        transportList = new Gson().fromJson(json, TransPathList.class);
                         try {
                             ExceptionService.getInstance().isExistTransportInformation(transportList);
                         } catch (ExceptionHandle e) {
@@ -144,20 +132,19 @@ public class RetrofitCommunication {
                         }
                         if (transportList != null) {
                             Log.v("총 시간 개수", String.valueOf(transportList.getUserArr().size()));
-                            TransportInfoList.getInstance().setUserArr(transportList.getUserArr());
+
+                            for (SearchPubTransPath transPath: transportList.getUserArr()) {
+                                transPath.setTotalHour(transPath.getTotalTime() / 60);
+                                transPath.setTotalMinute(transPath.getTotalTime() % 60);
+                            }
+                            TransPathList.getInstance().setUserArr(transportList.getUserArr());
                             // set MidInfo
                             LatLng latLng = new LatLng(transportList.getMidInfo().getMidLat(), transportList.getMidInfo().getMidLng());
                             MidInfo midInfo = new MidInfo(latLng, transportList.getMidInfo().getAddress());
                             MidInfo.setMidInfo(midInfo);
-                            // set Landmark
-                            if (transportList.getLandmark() != null) {
-                                LatLng lmlatlng = new LatLng(transportList.getLandmark().getLatitude(), transportList.getLandmark().getLongitude());
-                                Landmark landmark = new Landmark(lmlatlng, transportList.getLandmark().getName(), transportList.getLandmark().getAddress());
-                                Landmark.setLandMark(landmark);
-                            }
                             //* set TransportInfo
-                            for (Data data : transportList.getUserArr())
-                                totalTimes.add(String.valueOf(data.getTotalTime()));
+                            for (SearchPubTransPath searchPubTransPath : transportList.getUserArr())
+                                totalTimes.add(String.valueOf(searchPubTransPath.getTotalTime()));
 
                             if (userCallBack != null) userCallBack.userDataPath(totalTimes);
 
@@ -254,61 +241,6 @@ public class RetrofitCommunication {
         });
     }
 
-
-    private void sendPersonLocationAndLandMark(ArrayList<Person> persons){
-        try{
-            ExceptionService.getInstance().isExistPerson(persons.size());
-        }catch (ExceptionHandle e){
-            e.printStackTrace();
-            return;
-        }
-        String strMessage = makeLandMarkForm(persons);
-        Log.v("메시지",strMessage);
-        totalTimes = new ArrayList<>();
-
-        final Call<JsonObject> comment = retrofitService.getLandMarkTransportData(strMessage);
-        comment.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response.isSuccessful()) {
-                    Log.v("알림", response.toString());
-                    Log.v("전체", response.body().toString());
-                    JsonObject json = response.body();
-                    if(response.body().toString().equals(Constant.ALGORITHM_ERROR)){
-                        if (userLandmarkBack != null) userLandmarkBack.disconnectServer();
-                        Log.e("algorithm","알고리즘 오류");
-                    }else {
-                        transportLandmarkInfoList = new Gson().fromJson(json, TransportLandmarkInfoList.class);
-                        try {
-                            ExceptionService.getInstance().isExistTransportLandmarkInformation(transportLandmarkInfoList);
-                        } catch (ExceptionHandle e) {
-                            e.printStackTrace();
-                            if (userLandmarkBack != null) userLandmarkBack.userLandmarkDataPath(null);
-                        }
-                        if (transportLandmarkInfoList != null) {
-                            Log.v("총 시간 개수", String.valueOf(transportLandmarkInfoList.getUserArr().size()));
-                            TransportLandmarkInfoList.getInstance().setUserArr(transportLandmarkInfoList.getUserArr());
-
-                            //* set TransportInfo
-                            for (Data data : transportLandmarkInfoList.getUserArr())
-                                totalTimes.add(String.valueOf(data.getTotalTime()));
-
-                            if (userLandmarkBack != null) userLandmarkBack.userLandmarkDataPath(totalTimes);
-
-                            Log.d("end1", new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(System.currentTimeMillis()));
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
-                if (userCallBack != null) userCallBack.disconnectServer();
-                Log.e("retrofit","통신 실패");
-            }
-        });
-    }
-
     private String makeForm(ArrayList<Person> persons){
         String strMessage="{\"userArr\":[";
         for(int i=0;i<persons.size();i++){
@@ -320,26 +252,9 @@ public class RetrofitCommunication {
         return strMessage;
     }
 
-    private String makeLandMarkForm(ArrayList<Person> persons){
-        String strMessage="{\"userArr\":[";
-        for(int i=0;i<persons.size();i++){
-            strMessage += persons.get(i).getAddressPosition().toString();
-            if(i!=persons.size()-1)
-                strMessage += ",";
-        }
-        strMessage +=
-                "],\"midLat\":"+Landmark.getInstance().getLatLng().latitude+",\"midLng\":"+Landmark.getInstance().getLatLng().longitude+"}";
-        return strMessage;
-    }
-
-
     public void sendMarkerTimeMessage(){
         sendPersonLocation(Person.getInstance());
         Log.v(Constant.TAG, "전송");
-    }
-
-    public void setBuildingsDataInLandmark(){
-        sendPersonLocationAndLandMark(Person.getInstance());
     }
 
     public void clickItem(Building building){
@@ -353,14 +268,6 @@ public class RetrofitCommunication {
         request.setType(buildingType);
         request.setMidLat(MidInfo.getInstance().getLatLng().latitude);
         request.setMidLng(MidInfo.getInstance().getLatLng().longitude);
-        sendBuildingInfo(request);
-    }
-
-    public void setBuildingsDataInLandmark(int buildingType){
-        UserRequest request = new UserRequest();
-        request.setType(buildingType);
-        request.setMidLat(Landmark.getInstance().getLatLng().latitude);
-        request.setMidLng(Landmark.getInstance().getLatLng().longitude);
         sendBuildingInfo(request);
     }
 }
