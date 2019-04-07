@@ -5,36 +5,27 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransportInfoList {
+public class TransPathList {
 
-    private static TransportInfoList instance = new TransportInfoList();
+    private static TransPathList instance = new TransPathList();
 
-    public static synchronized TransportInfoList getInstance() {
+    public static synchronized TransPathList getInstance() {
         return instance;
     }
 
     @SerializedName("userArr")
-    private List<Data> userArr;
-    @SerializedName("landmark")
-    private Landmark landmark;
+    private List<SearchPubTransPath> userArr;
     @SerializedName("midInfo")
     private MidInfo midInfo;
 
     private ArrayList<String> error;
 
-    public List<Data> getUserArr() {
+    public List<SearchPubTransPath> getUserArr() {
         return userArr;
     }
 
-    public void setUserArr(List<Data> userArr) {
+    public void setUserArr(List<SearchPubTransPath> userArr) {
         this.userArr = userArr;
-    }
-    public Landmark getLandmark() {
-        return landmark;
-    }
-
-    public void setLandmark(Landmark landmark) {
-        this.landmark = landmark;
     }
 
     public MidInfo getMidInfo() {

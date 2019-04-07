@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class Building{
 
     // DetailBuilding
-    private static Building instance = new Building(Constant.landmark_latitude, Constant.landmark_longitude, Constant.landmark_name, Constant.landmark_address, Constant.distance);
+    private static Building instance = new Building(Constant.latitude, Constant.longitude, Constant.name, Constant.address, Constant.distance);
 
     public static synchronized Building getInstance() {
         return instance;

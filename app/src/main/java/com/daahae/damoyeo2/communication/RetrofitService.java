@@ -23,12 +23,4 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("midDetailCategory")
     Call<JsonObject> getBuildingDetail(@Field("buildingRequest") String name);
-
-    //@Multipart
-    @FormUrlEncoded
-    @POST("midTransportInfo")
-    Call<JsonObject> getLandMarkTransportData(@Field("userArr") String user);
-
-
-
 }

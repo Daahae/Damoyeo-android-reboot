@@ -9,7 +9,6 @@ import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.BuildingArr;
 import com.daahae.damoyeo2.model.TransportInfoList;
-import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.activity.CategoryActivity;
 
@@ -29,24 +28,11 @@ public class CategoryPresenter {
 
     public void setSelectCategory(int category) {
         Log.d("start2", new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(System.currentTimeMillis()));
-        if(!CategoryActivity.isMid)
-            RetrofitCommunication.getInstance().setBuildingsData(category);
-        else
-            RetrofitCommunication.getInstance().setBuildingsDataInLandmark(category);
+        RetrofitCommunication.getInstance().setBuildingsData(category);
     }
 
     public void getBuildingDetailFromServer(int index) {
         RetrofitCommunication.getInstance().clickItem(view.getBuildingAdapter().getItem(index));
-    }
-
-    public void setLandmarkTransport(){
-        ArrayList<String> totalTimes = new ArrayList<>();
-        for(int i = 0; i< TransportLandmarkInfoList.getInstance().getUserArr().size(); i++){
-            totalTimes.add(String.valueOf(TransportLandmarkInfoList.getInstance().getUserArr().get(i).getTotalTime()));
-        }
-        view.initMarkerTime(totalTimes);
-        view.setMarkerTimeList(view.getMarkerTimeAdapter());
-        view.getListMarkerTime().setAdapter(view.getMarkerTimeAdapter());
     }
 
     public void setMidInfoTransport(){
@@ -57,28 +43,6 @@ public class CategoryPresenter {
         view.initMarkerTime(totalTimes);
         view.setMarkerTimeList(view.getMarkerTimeAdapter());
         view.getListMarkerTime().setAdapter(view.getMarkerTimeAdapter());
-    }
-
-    public void clickLandmark(){
-
-        RetrofitCommunication.getInstance().setBuildingsDataInLandmark();
-
-        RetrofitCommunication.UserLandmarkBack userLandmarkBack = new RetrofitCommunication.UserLandmarkBack() {
-            @Override
-            public void userLandmarkDataPath(ArrayList<String> totalTimes) {
-                Log.v("랜드마크", TransportInfoList.getInstance().toString());
-                view.initMarkerTime(totalTimes);
-                Log.v("전체 시간", totalTimes.toString());
-                view.setMarkerTimeList(view.getMarkerTimeAdapter());
-                view.getListMarkerTime().setAdapter(view.getMarkerTimeAdapter());
-            }
-            @Override
-            public void disconnectServer() {
-                Toast.makeText(Constant.context,"랜드마크 탐색에 실패했습니다", Toast.LENGTH_SHORT).show();
-
-            }
-        };
-        RetrofitCommunication.getInstance().setUserLandmarkData(userLandmarkBack);
     }
 
     public void startCallback() {
