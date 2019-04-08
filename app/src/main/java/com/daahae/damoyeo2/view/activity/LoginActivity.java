@@ -36,8 +36,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btnGuestLogin;
-
     private SignInButton signInButton;
     private GoogleSignInClient googleSignInClient;
     private GoogleApiClient googleApiClient;
@@ -82,7 +80,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView(){
-        btnGuestLogin = findViewById(R.id.btn_guest_login);
         signInButton = findViewById(R.id.btn_google_login);
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -93,7 +90,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initListener(){
-        btnGuestLogin.setOnClickListener(this);
         signInButton.setOnClickListener(this);
     }
 
@@ -130,9 +126,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 signInButton.setClickable(false);
                 signInButton.setEnabled(false);
                 break;
-            case R.id.btn_guest_login:
-                guestSignIn();
-                break;
         }
     }
 
@@ -140,13 +133,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void googleSignIn() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, Constant.LOG_IN);
-    }
-
-    // 게스트 로그인
-    private void guestSignIn(){
-        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
-        intent.putExtra(Constant.LOGIN, Constant.GUEST_LOGIN);
-        startActivityForResult(intent, Constant.GUEST_LOGIN);
     }
 
     // 파이어베이스와 로그인 인증정보 동기화
