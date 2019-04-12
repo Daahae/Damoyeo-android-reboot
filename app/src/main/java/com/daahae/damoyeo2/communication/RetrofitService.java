@@ -29,6 +29,20 @@ public interface RetrofitService {
     @POST("midTransportInfo")
     Call<JsonObject> getLandMarkTransportData(@Field("userArr") String user);
 
+    //@Multipart
+    @FormUrlEncoded
+    @POST("login")
+    Call<JsonObject> getLoginInfo(@Field("userLoginInfo") String user);
 
+    //@Multipart
+    @FormUrlEncoded
+    @POST("category")
+    Call<JsonObject> getCategoryInformation(@Field("categoryInfoArr") String categoryInfo);
+
+
+    //@Multipart
+    @FormUrlEncoded
+    @POST("friend")
+    Call<JsonObject> getFriendsList(@Field("friend") String user);
 
 }

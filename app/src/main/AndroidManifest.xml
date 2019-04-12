@@ -24,6 +24,9 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".view.activity.MainActivity"
+            android:label="@string/title_activity_main2"></activity>
         <!-- Bitmap too large to be uploaded into a texture -->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -38,25 +41,27 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".view.activity.LoginActivity"
-            android:configChanges="keyboardHidden|orientation" >
+            android:name=".view_pre.activity.LoginActivity"
+            android:configChanges="keyboardHidden|orientation" />
+        <activity
+            android:name=".view_pre.activity.MapsActivity"
+            android:configChanges="keyboardHidden|orientation" />
+        <activity
+            android:name=".view_pre.activity.CategoryActivity"
+            android:configChanges="keyboardHidden|orientation" />
+        <activity
+            android:name=".view_pre.activity.DetailActivity"
+            android:configChanges="keyboardHidden|orientation" />
+        <activity android:name=".view_pre.activity.MyPageActivity" />
+        <activity android:name=".view_pre.activity.TransportActivity" />
+        <activity android:name=".view.activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.activity.MapsActivity"
-            android:configChanges="keyboardHidden|orientation" />
-        <activity
-            android:name=".view.activity.CategoryActivity"
-            android:configChanges="keyboardHidden|orientation" />
-        <activity
-            android:name=".view.activity.DetailActivity"
-            android:configChanges="keyboardHidden|orientation" />
-        <activity android:name=".view.activity.MyPageActivity" />
-        <activity android:name=".view.activity.TransportActivity" />
+        <activity android:name=".view.activity.InterestActivity" />
     </application>
 
 </manifest>

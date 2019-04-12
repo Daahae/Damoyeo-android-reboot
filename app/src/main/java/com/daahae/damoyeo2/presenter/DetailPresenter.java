@@ -2,7 +2,7 @@ package com.daahae.damoyeo2.presenter;
 
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.BuildingDetail;
-import com.daahae.damoyeo2.view.activity.DetailActivity;
+import com.daahae.damoyeo2.view_pre.activity.DetailActivity;
 
 public class DetailPresenter {
 

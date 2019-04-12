@@ -10,8 +10,8 @@ import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.BuildingArr;
 import com.daahae.damoyeo2.model.TransportInfoList;
 import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
-import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.activity.CategoryActivity;
+import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view_pre.activity.CategoryActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

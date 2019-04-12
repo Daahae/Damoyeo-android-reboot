@@ -9,9 +9,9 @@ import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.exception.ExceptionHandle;
 import com.daahae.damoyeo2.exception.ExceptionService;
 import com.daahae.damoyeo2.model.Person;
-import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.activity.CategoryActivity;
-import com.daahae.damoyeo2.view.activity.MapsActivity;
+import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view_pre.activity.CategoryActivity;
+import com.daahae.damoyeo2.view_pre.activity.MapsActivity;
 
 import java.text.SimpleDateFormat;
 

@@ -6,7 +6,7 @@ import com.daahae.damoyeo2.model.BuildingRequest;
 import com.daahae.damoyeo2.model.TransportInfoList;
 import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
 import com.daahae.damoyeo2.model.UserRequest;
-import com.daahae.damoyeo2.view.Constant;
+import com.daahae.damoyeo2.view_pre.Constant;
 
 public class ExceptionService {
 
@@ -91,4 +91,5 @@ public class ExceptionService {
         if(buildingDetail == null)
             throw new ExceptionHandle("빌딩 상세 정보가 없습니다");
     }
+
 }

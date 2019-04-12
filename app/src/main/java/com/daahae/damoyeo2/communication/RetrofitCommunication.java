@@ -10,17 +10,23 @@ import com.daahae.damoyeo2.model.Building;
 import com.daahae.damoyeo2.model.BuildingArr;
 import com.daahae.damoyeo2.model.BuildingDetail;
 import com.daahae.damoyeo2.model.BuildingRequest;
+import com.daahae.damoyeo2.model.Category;
+import com.daahae.damoyeo2.model.CategoryInfo;
 import com.daahae.damoyeo2.model.Data;
 import com.daahae.damoyeo2.model.Landmark;
+import com.daahae.damoyeo2.model.LoginCheck;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
+import com.daahae.damoyeo2.model.RequestForm;
 import com.daahae.damoyeo2.model.TransportInfoList;
 import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
+import com.daahae.damoyeo2.model.UserLoginInfo;
 import com.daahae.damoyeo2.model.UserRequest;
-import com.daahae.damoyeo2.view.Constant;
+import com.daahae.damoyeo2.view_pre.Constant;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,11 +49,14 @@ public class RetrofitCommunication {
     private BuildingArr buildingList;
     private BuildingDetail buildingDetail;
     private TransportLandmarkInfoList transportLandmarkInfoList;
+    private LoginCheck loginCheck;
 
     private UserCallBack userCallBack;
     private BuildingCallBack buildingCallBack;
     private BuildingDetailCallBack buildingDetailCallBack;
     private UserLandmarkBack userLandmarkBack;
+    private LoginCallBack loginCallBack;
+    private FriendsListCallBack friendsListCallBack;
 
     private static RetrofitCommunication instance = new RetrofitCommunication();
 
@@ -68,11 +77,19 @@ public class RetrofitCommunication {
         void buildingDetailDataPath(BuildingDetail buildingDetail);
     }
 
+    public interface LoginCallBack {
+        void loginDataPath(LoginCheck loginCheck);
+    }
+
+    public interface FriendsListCallBack {
+        void friendsListDataPath(FriendsListCallBack friendsListCallBack);
+    }
 
     public interface UserLandmarkBack {
         void userLandmarkDataPath(ArrayList<String> totalTimes);
         void disconnectServer();
     }
+
 
     private RetrofitCommunication(){
         connectServer();
@@ -90,6 +107,12 @@ public class RetrofitCommunication {
     }
     public void setUserLandmarkData(UserLandmarkBack userLandmarkBack){
         this.userLandmarkBack = userLandmarkBack;
+    }
+    public void setLoginCheck(LoginCallBack loginCallBack){
+        this.loginCallBack = loginCallBack;
+    }
+    public void setFriendsListCallBack(FriendsListCallBack friendsListCallBack){
+        this.friendsListCallBack = friendsListCallBack;
     }
 
     private void init() {
@@ -309,6 +332,82 @@ public class RetrofitCommunication {
         });
     }
 
+
+    private void sendUserLoginInformation(UserLoginInfo userLoginInfo){
+        String message = userLoginInfo.toString();
+        Log.v("메시지",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getLoginInfo(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
+                    //JsonObject json = response.body();
+                    String json = response.body().toString();
+                    loginCheck = new Gson().fromJson(json, LoginCheck.class);
+                    Log.v("로그인", loginCheck.getHistory()+"");
+                    loginCallBack.loginDataPath(loginCheck);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","통신 실패");
+            }
+        });
+    }
+
+    private void sendFriendsRequest(RequestForm request){
+        String message = request.toString();
+        Log.v("메시지",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getFriendsList(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
+                    //JsonObject json = response.body();
+                    String json = response.body().toString();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","통신 실패");
+            }
+        });
+    }
+
+    private void sendCategoryInformation(CategoryInfo categoryInfo){
+        String message = makeCategoryForm(categoryInfo);
+        Log.v("메시지",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getCategoryInformation(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","통신 실패");
+            }
+        });
+    }
+
+    public void sendLoginInformation(){
+        sendUserLoginInformation(UserLoginInfo.getInstance());
+    }
+
+
     private String makeForm(ArrayList<Person> persons){
         String strMessage="{\"userArr\":[";
         for(int i=0;i<persons.size();i++){
@@ -332,6 +431,28 @@ public class RetrofitCommunication {
         return strMessage;
     }
 
+    private String makeCategoryForm(CategoryInfo categoryInfo){
+        ArrayList<Category> categories  = categoryInfo.getCategories();
+        String strMessage="[";
+        for(int i=0;i<categories.size();i++){
+            strMessage += categories.get(i).toString();
+            if(i!=categories.size()-1)
+                strMessage += ",";
+        }
+        strMessage +=
+                "]";
+        return strMessage;
+    }
+
+    public void setCategoryInformation(CategoryInfo categoryInfo){
+        sendCategoryInformation(categoryInfo);
+    }
+
+    public void sendFriendsListRequest(){
+        RequestForm request = new RequestForm();
+        request.setEmail(Constant.email);
+        sendFriendsRequest(request);
+    }
 
     public void sendMarkerTimeMessage(){
         sendPersonLocation(Person.getInstance());
