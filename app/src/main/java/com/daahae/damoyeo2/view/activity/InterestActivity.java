@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.daahae.damoyeo2.R;
-import com.daahae.damoyeo2.databinding.InterestActivityBinding;
+import com.daahae.damoyeo2.databinding.ActivityInterestBinding;
 import com.daahae.damoyeo2.handler.BackPressCloseHandler;
 import com.daahae.damoyeo2.navigator.UserNavigator;
 import com.daahae.damoyeo2.view_model.InterestViewModel;
@@ -16,7 +16,7 @@ public class InterestActivity extends AppCompatActivity implements UserNavigator
 
     private InterestViewModel interestViewModel;
 
-    private InterestActivityBinding binding;
+    private ActivityInterestBinding binding;
 
     private BackPressCloseHandler backPressCloseHandler;
 
@@ -36,7 +36,7 @@ public class InterestActivity extends AppCompatActivity implements UserNavigator
     }
 
     private void bindingView(){
-        binding =  DataBindingUtil.setContentView(this, R.layout.interest_activity);
+        binding =  DataBindingUtil.setContentView(this, R.layout.activity_interest);
         binding.setModel(interestViewModel);
 
         interestViewModel.onCreate();

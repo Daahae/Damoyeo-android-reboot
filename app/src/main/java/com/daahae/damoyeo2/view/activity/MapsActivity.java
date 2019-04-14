@@ -483,7 +483,7 @@ public class MapsActivity
                 else
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
             }
-            sendMarkerGetSync();
+            instantSendMarkerGetSync();
             return;
         }
 
@@ -558,6 +558,23 @@ public class MapsActivity
                     sendMarkerGetSync();
                 }
             }, 10000); // 10seconds
+        }
+    }
+
+    // 2019.04.14 Inhyeok - add for getting sync immediately
+    private void instantSendMarkerGetSync() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user == null) {
+            setResult(Constant.LOG_OUT);
+            finish();
+        } else {
+            UserPos userPos;
+            if (userMarker == null)
+                userPos = new UserPos(user.getEmail(), -1, -1);
+            else
+                userPos = new UserPos(user.getEmail(), userMarker.getPosition().latitude, userMarker.getPosition().longitude);
+            RetrofitCommunication.getInstance().sendUserPosForSync(userPos, handler);
         }
     }
 

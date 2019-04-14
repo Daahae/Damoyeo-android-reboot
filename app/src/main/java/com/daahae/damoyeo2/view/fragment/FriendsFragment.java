@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
-import com.daahae.damoyeo2.databinding.FriendsFragmentBinding;
+import com.daahae.damoyeo2.databinding.FragmentFriendsBinding;
 import com.daahae.damoyeo2.view_model.MainViewModel;
 
 public class FriendsFragment extends Fragment {
@@ -27,7 +27,7 @@ public class FriendsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        return DataBindingUtil.inflate(inflater, R.layout.friends_fragment, container, false).getRoot();
+        return DataBindingUtil.inflate(inflater, R.layout.fragment_friends, container, false).getRoot();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class FriendsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         MainViewModel model = new MainViewModel();
-        FriendsFragmentBinding binding = DataBindingUtil.getBinding(getView());
+        FragmentFriendsBinding binding = DataBindingUtil.getBinding(getView());
         binding.setModel(model);
         model.onCreate();
     }

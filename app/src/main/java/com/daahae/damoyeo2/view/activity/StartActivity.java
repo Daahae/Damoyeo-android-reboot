@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
-import com.daahae.damoyeo2.databinding.StartActivityBinding;
+import com.daahae.damoyeo2.databinding.ActivityStartBinding;
 import com.daahae.damoyeo2.model.LoginCheck;
 import com.daahae.damoyeo2.model.UserLoginInfo;
 import com.daahae.damoyeo2.handler.BackPressCloseHandler;
@@ -45,7 +45,7 @@ public class StartActivity extends AppCompatActivity implements StartNavigator{
 
     private StartViewModel startViewModel;
 
-    private StartActivityBinding binding;
+    private ActivityStartBinding binding;
 
     private GoogleSignInClient googleSignInClient;
     private GoogleApiClient googleApiClient;
@@ -85,7 +85,7 @@ public class StartActivity extends AppCompatActivity implements StartNavigator{
     }
 
     private void bindingView(){
-        binding =  DataBindingUtil.setContentView(this, R.layout.start_activity);
+        binding =  DataBindingUtil.setContentView(this, R.layout.activity_start);
         binding.setModel(startViewModel);
 
         startViewModel.onCreate();

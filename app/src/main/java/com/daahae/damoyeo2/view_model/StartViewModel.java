@@ -4,7 +4,7 @@ import android.databinding.Bindable;
 import android.databinding.BaseObservable;
 import android.view.View;
 
-import com.daahae.damoyeo2.BR;
+import com.android.databinding.library.baseAdapters.BR;
 import com.daahae.damoyeo2.navigator.StartNavigator;
 
 public class StartViewModel extends BaseObservable implements BaseViewModel {

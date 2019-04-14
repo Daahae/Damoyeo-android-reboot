@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.daahae.damoyeo2.R;
-import com.daahae.damoyeo2.databinding.MainActivityBinding;
+import com.daahae.damoyeo2.databinding.ActivityMainBinding;
 import com.daahae.damoyeo2.navigator.MainNavigator;
 import com.daahae.damoyeo2.view.fragment.ChattingFragment;
 import com.daahae.damoyeo2.view.fragment.FriendsFragment;
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity{
 
     private MainViewModel mainViewModel;
 
-    private MainActivityBinding binding;
+    private ActivityMainBinding binding;
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void bindingView(){
-        binding =  DataBindingUtil.setContentView(this, R.layout.main_activity);
+        binding =  DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setModel(mainViewModel);
 
         mainViewModel.onCreate();
