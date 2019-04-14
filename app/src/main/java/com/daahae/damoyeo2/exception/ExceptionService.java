@@ -81,4 +81,5 @@ public class ExceptionService {
         if(buildingDetail == null)
             throw new ExceptionHandle("빌딩 상세 정보가 없습니다");
     }
+
 }
