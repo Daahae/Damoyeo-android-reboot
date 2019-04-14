@@ -62,6 +62,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.activity.InterestActivity" />
+        <activity android:name=".view.activity.DirectionActivity" />
     </application>
 
 </manifest>

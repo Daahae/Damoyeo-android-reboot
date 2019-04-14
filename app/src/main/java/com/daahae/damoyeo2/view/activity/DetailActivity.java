@@ -26,7 +26,6 @@ import android.widget.Toast;
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.model.Building;
 import com.daahae.damoyeo2.model.BuildingDetail;
-import com.daahae.damoyeo2.model.Landmark;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.presenter.DetailPresenter;
 import com.daahae.damoyeo2.view.Constant;
@@ -240,14 +239,12 @@ public class DetailActivity
     public void onLocationChanged(Location location) {
         Log.i(Constant.TAG, "onLocationChanged call..");
 
-        if(MapsActivity.LOGIN_FLG == Constant.GOOGLE_LOGIN) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
-                // TODO 스택에 쌓인 액티비티 전체 종료
-                setResult(Constant.LOG_OUT);
-                finish();
-            }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
+            // TODO 스택에 쌓인 액티비티 전체 종료
+            setResult(Constant.LOG_OUT);
+            finish();
         }
     }
 
@@ -329,15 +326,8 @@ public class DetailActivity
 
         MarkerOptions markerOption = new MarkerOptions();
         // 이전페이지에서 중간지점 주변장소를 선택했다면
-        if(!CategoryActivity.isMid) {
-            markerOption.position(MidInfo.getInstance().getLatLng());
-            markerOption.title(Constant.DEFAULT_MIDINFO_NAME);
-        }
-        // 랜드마크 주변 장소를 선택했다면
-        else {
-            markerOption.position(Landmark.getInstance().getLatLng());
-            markerOption.title(Constant.DEFAULT_LANDMARK_NAME);
-        }
+        markerOption.position(MidInfo.getInstance().getLatLng());
+        markerOption.title(Constant.DEFAULT_MIDINFO_NAME);
         markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         googleMap.addMarker(markerOption);
     }

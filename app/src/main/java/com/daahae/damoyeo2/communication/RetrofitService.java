@@ -23,7 +23,6 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("midDetailCategory")
     Call<JsonObject> getBuildingDetail(@Field("buildingRequest") String name);
-
     //@Multipart
     @FormUrlEncoded
     @POST("midTransportInfo")
@@ -44,5 +43,4 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("friend")
     Call<JsonObject> getFriendsList(@Field("friend") String user);
-
 }

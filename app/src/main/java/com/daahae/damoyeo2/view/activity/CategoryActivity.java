@@ -12,7 +12,6 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -40,7 +39,6 @@ import com.daahae.damoyeo2.exception.ExceptionHandle;
 import com.daahae.damoyeo2.exception.ExceptionService;
 import com.daahae.damoyeo2.model.Building;
 import com.daahae.damoyeo2.model.BuildingArr;
-import com.daahae.damoyeo2.model.Landmark;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.presenter.CategoryPresenter;
@@ -98,9 +96,6 @@ public class CategoryActivity
 
     private BuildingAdapter buildingAdapter;
     private ListView listCategory;
-
-    private FloatingActionButton fabMid;
-    public static boolean isMid = false;
 
     private ImageButton btnDownSlidingDrawer;
     private ImageButton btnDepartment, btnShopping, btnStadium, btnZoo, btnMuseum, btnTheater, btnAquarium, btnCafe, btnDrink, btnRestaurant, btnEtc;
@@ -161,7 +156,6 @@ public class CategoryActivity
         relativeMap = findViewById(R.id.relative_map);
         mapView = findViewById(R.id.map_category);
         mapView.getMapAsync(this);
-        fabMid = findViewById(R.id.fab_mid);
 
         btnBack = findViewById(R.id.btn_back_category);
         listMarkerTime = findViewById(R.id.list_marker_time);
@@ -201,7 +195,6 @@ public class CategoryActivity
         btnBack.setOnClickListener(this);
 
         btnAllMarkerList.setOnClickListener(this);
-        fabMid.setOnClickListener(this);
 
         //각 리스트 아이템 클릭
         listMarkerTime.setOnItemClickListener(this);
@@ -398,13 +391,11 @@ public class CategoryActivity
     public void onLocationChanged(Location location) {
         Log.i(Constant.TAG, "onLocationChanged call..");
 
-        if(MapsActivity.LOGIN_FLG == Constant.GOOGLE_LOGIN) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
-                setResult(Constant.LOG_OUT);
-                finish();
-            }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
+            setResult(Constant.LOG_OUT);
+            finish();
         }
     }
     private void buildGoogleApiClient() {
@@ -484,18 +475,10 @@ public class CategoryActivity
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case Constant.CATEGORY_PAGE:
-
-                if(!isMid) {
-                    if(resultCode == -1)
-                        showAllMarkers();
-                    else
-                        showEachMarker(resultCode);
-                } else {
-                    if(resultCode == -1)
-                        showLandmarkAllMarkers();
-                    else
-                        showLandmarkEachMarker(resultCode);
-                }
+                if(resultCode == -1)
+                    showAllMarkers();
+                else
+                    showEachMarker(resultCode);
                 setCameraState(relativeMap);
                 break;
         }
@@ -505,7 +488,7 @@ public class CategoryActivity
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         if(parent.equals(listMarkerTime)){
-            Intent intent = new Intent(this, TransportActivity.class);
+            Intent intent = new Intent(this, DirectionActivity.class);
             startActivityForResult(intent, Constant.CATEGORY_PAGE);
         } else {
             Intent intent = new Intent(CategoryActivity.this, DetailActivity.class);
@@ -523,32 +506,8 @@ public class CategoryActivity
                 Constant.existLandmarkTransport = false;
                 break;
             case R.id.btn_all_marker_list:
-                if(!isMid) {
-                    showAllMarkers();
-                    setCameraState(relativeMap);
-                } else {
-                    showLandmarkAllMarkers();
-                    setCameraState(relativeMap);
-                }
-                break;
-            case R.id.fab_mid:
-                if (isMid) {
-                    presenter.setMidInfoTransport();
-                    showAllMarkers();
-                    setCameraState(relativeMap);
-                    fabMid.setImageResource(R.drawable.btn_selected_landmark_orange);
-                    isMid = false;
-                } else {
-                    if(!Constant.existLandmarkTransport){
-                        presenter.clickLandmark();
-                        Constant.existLandmarkTransport = true;
-                    }
-                    else presenter.setLandmarkTransport();
-                    showLandmarkAllMarkers();
-                    setCameraState(relativeMap);
-                    fabMid.setImageResource(R.drawable.btn_selected_mid_orange);
-                    isMid = true;
-                }
+                showAllMarkers();
+                setCameraState(relativeMap);
                 break;
 
             case R.id.btn_down_sliding_drawer_category:
@@ -759,7 +718,6 @@ public class CategoryActivity
 
     public void initMarkerTime(ArrayList<String> totalTimes){
         this.totalTimes = totalTimes;
-        // Log.v("시간",this.totalTimes.toString());
     }
 
     public void setMarkerTimeList(MarkerTimeAdapter markerTimeAdapter) {
@@ -865,67 +823,6 @@ public class CategoryActivity
         builder.include(markerOptions.getPosition());
 
         // drawRoute(MidInfo.getInstance().getLatLng(), latLng);
-    }
-
-    // 랜드마크와 사용자 전체 마커 표시
-    public void showLandmarkAllMarkers() {
-        googleMap.clear();
-        builder = new LatLngBounds.Builder();
-
-        MarkerOptions markerOption = new MarkerOptions();
-        markerOption.position(Landmark.getInstance().getLatLng());
-        markerOption.title(Landmark.getInstance().getName());
-        markerOption.snippet(Landmark.getInstance().getAddress());
-        markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        googleMap.addMarker(markerOption).showInfoWindow();
-
-        builder.include(markerOption.getPosition());
-
-        for (Person person : Person.getInstance()) {
-            String markerTitle = person.getName();
-            String markerSnippet = person.getAddress();
-            LatLng latLng = new LatLng(person.getAddressPosition().getX(), person.getAddressPosition().getY());
-
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title(markerTitle);
-            markerOptions.snippet(markerSnippet);
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            googleMap.addMarker(markerOptions);
-
-            builder.include(markerOptions.getPosition());
-        }
-    }
-
-    // 랜드마크와 선택된 사용자 마커 표시
-    public void showLandmarkEachMarker(int index) {
-        googleMap.clear();
-        builder = new LatLngBounds.Builder();
-
-        MarkerOptions markerOption = new MarkerOptions();
-        markerOption.position(Landmark.getInstance().getLatLng());
-        markerOption.title(Landmark.getInstance().getName());
-        markerOption.snippet(Landmark.getInstance().getAddress());
-        markerOption.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        googleMap.addMarker(markerOption).showInfoWindow();
-
-        builder.include(markerOption.getPosition());
-
-        Person person = Person.getInstance().get(index);
-        String markerTitle = person.getName();
-        String markerSnippet = person.getAddress();
-        LatLng latLng = new LatLng(person.getAddressPosition().getX(), person.getAddressPosition().getY());
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title(markerTitle);
-        markerOptions.snippet(markerSnippet);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        googleMap.addMarker(markerOptions);
-
-        builder.include(markerOptions.getPosition());
-
-        // drawRoute(Landmark.getInstance().getLatLng(), latLng);
     }
 
     private void drawRoute(LatLng startLatlng, LatLng endLatLng) {
