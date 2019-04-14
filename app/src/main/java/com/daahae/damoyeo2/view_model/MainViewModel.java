@@ -19,6 +19,10 @@ public class MainViewModel implements BaseViewModel {
     public final ObservableField<Drawable> btnSetting = new ObservableField<>();
     public final ObservableField<String> txtTitle = new ObservableField<>();
 
+
+    public final ObservableField<String> txtName = new ObservableField<>();
+    public final ObservableField<Drawable> drawableImage = new ObservableField<>();
+
     public void setMainNavigator(MainNavigator navigator){
         this.navigator = navigator;
     }
@@ -36,6 +40,9 @@ public class MainViewModel implements BaseViewModel {
         btnChatting.set(ContextCompat.getDrawable(Constant.context,R.drawable.ic_chatting_white));
         btnSetting.set(ContextCompat.getDrawable(Constant.context,R.drawable.ic_setting_white));
         txtTitle.set("친구");
+
+        txtName.set(Constant.nickname);
+        drawableImage.set(Constant.context.getDrawable(R.drawable.ic_my_profile));
     }
 
     @Override
@@ -52,7 +59,6 @@ public class MainViewModel implements BaseViewModel {
     public void onDestroy() {
 
     }
-
 
     public View.OnClickListener replaceFragmentListener = new View.OnClickListener() {
         @Override

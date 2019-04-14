@@ -11,9 +11,20 @@ import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.FragmentChattingBinding;
+import com.daahae.damoyeo2.view.adapter.ChattingListAdapter;
+import com.daahae.damoyeo2.view.adapter.FriendsAdapter;
+import com.daahae.damoyeo2.view_model.ChattingListModel;
+import com.daahae.damoyeo2.view_model.FriendsModel;
 import com.daahae.damoyeo2.view_model.MainViewModel;
 
+import java.util.ArrayList;
+
 public class ChattingFragment extends Fragment {
+
+    private FragmentChattingBinding binding;
+    private ChattingListModel chattingListModel;
+    private ArrayList<ChattingListModel> chattingListModelArrayList;
+    private ChattingListAdapter chattingListAdapter;
 
     public ChattingFragment(){
 
@@ -38,5 +49,10 @@ public class ChattingFragment extends Fragment {
         FragmentChattingBinding binding = DataBindingUtil.getBinding(getView());
         binding.setModel(model);
         model.onCreate();
+
+        chattingListModel = new ChattingListModel();
+        chattingListModelArrayList = chattingListModel.getArrayListChattingList();
+        chattingListAdapter = new ChattingListAdapter(getContext(),chattingListModelArrayList);
+        binding.listView.setAdapter(chattingListAdapter);
     }
 }
