@@ -6,8 +6,11 @@ import com.daahae.damoyeo2.model.Position;
 import com.google.android.gms.maps.model.LatLng;
 
 public class Constant {
+    public static final String TAG = "damoyeo_gmap";
+    public static final String URL_PRE = "http://13.125.192.103/";
     public static final String TAG = "damoyeo_reboot";
     public static final String URL = "http://54.180.106.100:3443/";
+  
     public static final String ALGORITHM_ERROR = "{\"error\":\"Algorithm Error\"}";
 
     public static final int LOG_IN = 9001;
@@ -42,6 +45,38 @@ public class Constant {
     public static final int DETAIL_PAGE = 104;
 
     // Category
+    public static final int PLAY = 200;
+    public static final int SPORTS = 201;
+    public static final int KARAOKE = 202;
+    public static final int THEATER = 203;
+    public static final int ARCADE = 204;
+    public static final int PARK = 205;
+    public static final int PCROOM = 206;
+    public static final int PLAY_ETC = 207;
+
+    public static final int DRINK = 300;
+    public static final int BISTRO = 301;
+    public static final int BAR = 302;
+    public static final int CLUB = 303;
+    public static final int DRINK_ETC = 304;
+
+    public static final int SHOPPING = 400;
+    public static final int DEPARTMENT = 401;
+    public static final int SUPERMARKET = 402;
+    public static final int MARKETPLACE = 403;
+    public static final int SHOPPING_ETC = 404;
+
+    public static final int FOOD = 500;
+    public static final int KOREAN_FOOD = 501;
+    public static final int JAPANESE_FOOD = 502;
+    public static final int CHINESE_FOOD = 503;
+    public static final int WESTERN_FOOD = 504;
+    public static final int FOOD_ETC = 505;
+
+    public static final int CATEGORY_MAX = 1000;
+
+
+    // Category
     public static final int DEPARTMENT_STORE = 11;
     public static final int SHOPPING_MALL = 12;
     public static final int STADIUM = 21;
@@ -50,7 +85,7 @@ public class Constant {
     public static final int MOVIE_THEATER = 24;
     public static final int AQUARIUM = 25;
     public static final int CAFE = 30;
-    public static final int DRINK = 40;
+    //public static final int DRINK = 40;
     public static final int RESTAURANT = 50;
     public static final int ETC = 60;
 
@@ -74,4 +109,7 @@ public class Constant {
     public static final int REQUEST_LOCATION_SYNC_SUCCESS = 3001;
     public static final int REQUEST_LOCATION_SYNC_NONE = 3004;
     public static final int REQUEST_LOCATION_SYNC_FAIL = 3009;
+  
+    public static String email;
+    public static String nickname;
 }

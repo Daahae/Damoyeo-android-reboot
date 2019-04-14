@@ -1,18 +1,27 @@
 package com.daahae.damoyeo2.view.activity;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
-import android.os.Bundle;
+import android.databinding.DataBindingUtil;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
-import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.daahae.damoyeo2.R;
+import com.daahae.damoyeo2.communication.RetrofitCommunication;
+import com.daahae.damoyeo2.databinding.StartActivityBinding;
+import com.daahae.damoyeo2.model.LoginCheck;
+import com.daahae.damoyeo2.model.UserLoginInfo;
+import com.daahae.damoyeo2.handler.BackPressCloseHandler;
+import com.daahae.damoyeo2.navigator.StartNavigator;
+import com.daahae.damoyeo2.view_model.StartViewModel;
 import com.daahae.damoyeo2.view.Constant;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -20,7 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -33,23 +41,73 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class StartActivity extends AppCompatActivity implements StartNavigator{
 
-    private SignInButton signInButton;
+    private StartViewModel startViewModel;
+
+    private StartActivityBinding binding;
+
     private GoogleSignInClient googleSignInClient;
     private GoogleApiClient googleApiClient;
 
     private FirebaseAuth mAuth;
 
+    private GoogleSignInAccount account;
+
+    private FirebaseUser user;
+
+    private BackPressCloseHandler backPressCloseHandler;
+
+    Context context;
+
+    private boolean isLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        initView();
-        initListener();
+        context = this;
+
+        initViewModel();
+
+        bindingView();
 
         setGoogleLoginSetting();
+
+        setLogoAnimation();
+
+        backPressCloseHandler = new BackPressCloseHandler(this);
+
+    }
+
+    private void initViewModel(){
+        startViewModel = new StartViewModel(this);
+    }
+
+    private void bindingView(){
+        binding =  DataBindingUtil.setContentView(this, R.layout.start_activity);
+        binding.setModel(startViewModel);
+
+        startViewModel.onCreate();
+    }
+
+    private void setLogoAnimation(){
+        ImageView imgLogo = findViewById(R.id.img_logo_start);
+        final Animation animationTranslate = AnimationUtils.loadAnimation(this,R.anim.logo_translate);
+        imgLogo.startAnimation(animationTranslate);
+        visibleLoginButton();
+    }
+
+    private void visibleLoginButton(){
+        startViewModel.setVisible(false);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("context", "Loading finished");
+                startViewModel.setVisible(true);
+            }
+        }, 1500);
     }
 
     private void setGoogleLoginSetting() {
@@ -72,24 +130,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        autoLogin();
+    }
+
+    private void autoLogin(){
+
         // auto login
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account!=null)
+        account = GoogleSignIn.getLastSignedInAccount(this);
+        if(account!=null){
+            Log.v("account",account.getEmail());
             firebaseAuthWithGoogle(account);
+            setAccountInformation();
+            updateUserInformation();
+            loginCheckCallback();
+        }
     }
 
-    private void initView(){
-        signInButton = findViewById(R.id.btn_google_login);
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-
-        display.getSize(size);
-        Constant.displayWidth = size.x;
-    }
-
-    private void initListener(){
-        signInButton.setOnClickListener(this);
+    private void setAccountInformation() {
+        if (user != null) {
+            Constant.email = user.getEmail();
+            Constant.nickname = user.getDisplayName();
+        }
+        else {
+            Constant.email = account.getEmail();
+            Constant.nickname = account.getDisplayName();
+        }
     }
 
     @Override
@@ -102,11 +167,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(Constant.TAG, "Google sign in failed", e);
-                signInButton.setEnabled(true);
-                signInButton.setClickable(true);
             }
         } else if(requestCode == Constant.GOOGLE_LOGIN) {
             if(resultCode == Constant.LOG_OUT) {
@@ -117,21 +181,43 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.btn_google_login:
-                googleSignIn();
-                signInButton.setClickable(false);
-                signInButton.setEnabled(false);
-                break;
-        }
-    }
-
     // 구글 로그인
     private void googleSignIn() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, Constant.LOG_IN);
+
+    }
+
+    private void loginCheckCallback(){
+        RetrofitCommunication.LoginCallBack loginCallBack = new RetrofitCommunication.LoginCallBack() {
+            @Override
+            public void loginDataPath(LoginCheck loginCheck) {
+                Log.v("Login Check", loginCheck.getHistory()+"");
+
+
+                Intent intent = new Intent(StartActivity.this, InterestActivity.class);
+                intent.putExtra(Constant.LOGIN, Constant.GOOGLE_LOGIN);
+                startActivityForResult(intent, Constant.GOOGLE_LOGIN);
+                /*
+
+                if (loginCheck.getHistory() == 0) {
+                    Intent intent = new Intent(context, InterestActivity.class);
+                    intent.putExtra(Constant.LOGIN, Constant.GOOGLE_LOGIN);
+                    startActivityForResult(intent, Constant.GOOGLE_LOGIN);
+                    Log.v("화면전환", "Interest");
+                } else {
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra(Constant.LOGIN, Constant.GOOGLE_LOGIN);
+                    startActivityForResult(intent, Constant.GOOGLE_LOGIN);
+                    Log.v("화면전환", "Main");
+                }*/
+
+
+                Toast.makeText(getApplicationContext(), "안녕하세요, "+ Constant.nickname + "님", Toast.LENGTH_SHORT).show();
+            }
+        };
+        RetrofitCommunication.getInstance().setLoginCheck(loginCallBack);
+
     }
 
     // 파이어베이스와 로그인 인증정보 동기화
@@ -146,18 +232,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(Constant.TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(getApplicationContext(), "안녕하세요, "+user.getDisplayName() + "님", Toast.LENGTH_SHORT).show();
+                            user = mAuth.getCurrentUser();
 
-                            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
-                            intent.putExtra(Constant.LOGIN, Constant.GOOGLE_LOGIN);
-                            startActivityForResult(intent, Constant.GOOGLE_LOGIN);
+                            setAccountInformation();
+                            updateUserInformation();
+                            loginCheckCallback();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(Constant.TAG, "signInWithCredential:failure", task.getException());
                         }
-                        signInButton.setEnabled(true);
-                        signInButton.setClickable(true);
                     }
                 });
     }
@@ -187,5 +271,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             }
         });
+    }
+
+    @Override
+    public void loginActivity() {
+        googleSignIn();
+    }
+
+    @Override
+    public void sendUserInformation() {
+        updateUserInformation();
+    }
+
+    private void updateUserInformation(){
+        if(Constant.email!=null && !isLogin) {
+            isLogin = true;
+            UserLoginInfo.getInstance().setEmail(Constant.email);
+            UserLoginInfo.getInstance().setNickname(Constant.nickname);
+            RetrofitCommunication.getInstance().sendLoginInformation();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
     }
 }

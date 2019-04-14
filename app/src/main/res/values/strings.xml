@@ -26,6 +26,14 @@
     <string name="category_restaurant">식당</string>
     <string name="category_etc">기타</string>
 
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_friends">friends</string>
+    <string name="title_chatting">chatting</string>
+    <string name="title_setting">setting</string>
+
     <!-- item direction -->
     <string name="tv_direction_total_time_text">40분</string>
     <string name="tv_direction_walk_time_text">도보 10분</string>

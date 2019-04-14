@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="model"
+            type="com.daahae.damoyeo2.view_model.InterestViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        android:orientation="vertical"
+        tools:context=".view_2.activity.SelectActivity">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/basic_height"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/basic_height"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/basic_margin"
+                        android:text="관심사 선택"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/imageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="20dp"
+                        android:onClick="@{model.resetInterestListener}"
+                        android:background="@color/colorWhite"
+                        app:srcCompat="@drawable/ic_reset" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grayButtonEdge" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="25dp"
+                    android:lineSpacingExtra="5dp"
+                    android:text="흥미 있는 관심사를 각각 3개씩 선택해주세요!\n해당 선택은 가게 추천에 반영됩니다"
+                    android:textAlignment="center"
+                    android:textColor="@color/grayButtonText"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="놀거리"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/basic_margin"
+                    android:paddingLeft="@dimen/basic_margin"
+                    app:alignContent="stretch"
+                    app:alignItems="stretch"
+                    app:flexWrap="wrap">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(201)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectSportsListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="스포츠"
+                        android:textColor="@{model.isSelected(201)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(202)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectKaraokeListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="노래방"
+                        android:textColor="@{model.isSelected(202)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(203)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectTheaterListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="영화관"
+                        android:textColor="@{model.isSelected(203)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(204)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectArcadeListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="오락실"
+                        android:textColor="@{model.isSelected(204)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(205)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectParkListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="공원"
+                        android:textColor="@{model.isSelected(205)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(206)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectPCRoomListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="피씨방"
+                        android:textColor="@{model.isSelected(206)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(207)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectPlayEtcListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="기타"
+                        android:textColor="@{model.isSelected(207)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="술"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/basic_margin"
+                    android:paddingLeft="@dimen/basic_margin"
+                    app:alignContent="stretch"
+                    app:alignItems="stretch"
+                    app:flexWrap="wrap">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(301)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectBistroListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="포차"
+                        android:textColor="@{model.isSelected(301)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(302)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectBarListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="바"
+                        android:textColor="@{model.isSelected(302)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(303)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectClubListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="클럽"
+                        android:textColor="@{model.isSelected(303)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(304)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectDrinkEtcListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="기타"
+                        android:textColor="@{model.isSelected(304)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="쇼핑"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/basic_margin"
+                    android:paddingLeft="@dimen/basic_margin"
+                    app:alignContent="stretch"
+                    app:alignItems="stretch"
+                    app:flexWrap="wrap">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(401)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectDepartmentListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="백화점 (아울렛)"
+                        android:textColor="@{model.isSelected(401)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(402)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectSupermarketListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="대형마트"
+                        android:textColor="@{model.isSelected(402)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(403)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectMarketplaceListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="시장"
+                        android:textColor="@{model.isSelected(403)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(404)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectShoppingEtcListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="기타"
+                        android:textColor="@{model.isSelected(404)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+
+                </com.google.android.flexbox.FlexboxLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="음식"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/basic_margin"
+                    android:paddingLeft="@dimen/basic_margin"
+                    app:alignContent="stretch"
+                    app:alignItems="stretch"
+                    app:flexWrap="wrap">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(501)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectKoreanFoodListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="한식"
+                        android:textColor="@{model.isSelected(501)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(504)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectWesternFoodListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="양식"
+                        android:textColor="@{model.isSelected(504)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(502)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectJapaneseFoodListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="일식"
+                        android:textColor="@{model.isSelected(502)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(503)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectChineseFoodListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="중식"
+                        android:textColor="@{model.isSelected(503)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@{model.isSelected(505)? @drawable/full_orange_round_box:@drawable/edge_orange_round_box}"
+                        android:lineSpacingExtra="5sp"
+                        android:minWidth="60dp"
+                        android:onClick="@{model.selectFoodEtcListener}"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:text="기타"
+                        android:textColor="@{model.isSelected(505)? @color/colorWhite:@color/appMainColor}"
+                        android:textSize="13sp" />
+
+
+                </com.google.android.flexbox.FlexboxLayout>
+
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/basic_height"
+            android:background="@color/appMainColor"
+            android:onClick="@{model.selectInterestClickListener}"
+            android:text="확인"
+            android:textColor="@color/colorWhite" />
+    </LinearLayout>
+</layout>
