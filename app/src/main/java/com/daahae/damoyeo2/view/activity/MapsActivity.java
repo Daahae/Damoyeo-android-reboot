@@ -8,9 +8,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,12 +25,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.daahae.damoyeo2.R;
+import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
+import com.daahae.damoyeo2.model.UserPos;
 import com.daahae.damoyeo2.presenter.MapsPresenter;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.function.GPSInfo;
@@ -63,17 +65,14 @@ import java.util.List;
 public class MapsActivity
         extends AppCompatActivity
         implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-                    com.google.android.gms.location.LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
-
-    public static int LOGIN_FLG = Constant.GUEST_LOGIN;
+                    GoogleMap.OnMapClickListener {
 
     private MapsPresenter presenter;
 
     private GoogleMap googleMap = null;
     private MapView mapView = null;
     private GoogleApiClient googleApiClient = null;
-    private Marker currentMarker = null;
-    private Marker clickedMarker = null;
+    private Marker userMarker = null;
     private LatLngBounds.Builder builder;
 
     private ArrayList<Marker> markerList;
@@ -85,13 +84,14 @@ public class MapsActivity
 
     private Geocoder geocoder;
 
+    private FirebaseUser user;
+
+    private boolean isSend = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        // set LoginFlg
-        LOGIN_FLG = getIntent().getIntExtra(Constant.LOGIN, Constant.GUEST_LOGIN);
 
         Constant.context = this;
 
@@ -111,6 +111,12 @@ public class MapsActivity
             mapView.onCreate(savedInstanceState);
 
         setPlaceAutoComplete();
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            setResult(Constant.LOG_OUT);
+            finish();
+        }
     }
 
     private void initView() {
@@ -120,19 +126,9 @@ public class MapsActivity
 
         fabtn.setFabMenu((FloatingActionButton) findViewById(R.id.fab_menu));
         fabtn.setFabGPS((FloatingActionButton) findViewById(R.id.fab_gps));
-        fabtn.setFabPick((FloatingActionButton) findViewById(R.id.fab_pick));
-        fabtn.setFabClear((FloatingActionButton) findViewById(R.id.fab_clear));
+        fabtn.setFabUser((FloatingActionButton) findViewById(R.id.fab_user));
         fabtn.setFabFull((FloatingActionButton) findViewById(R.id.fab_full));
-        fabtn.setFabFix((FloatingActionButton) findViewById(R.id.fab_fix));
         fabtn.setFabLogout((FloatingActionButton) findViewById(R.id.fab_logout));
-        fabtn.setFabMypage((FloatingActionButton) findViewById(R.id.fab_mypage));
-
-        // 게스트 로그인 시 마이페이지 안보임
-        if(LOGIN_FLG == Constant.GUEST_LOGIN) {
-            fabtn.getFabMypage().setVisibility(View.GONE);
-            // TODO 로그인 버튼 필요
-            fabtn.getFabLogout().setImageDrawable(getResources().getDrawable(R.drawable.ic_logout, null));
-        }
 
         linearBtnSearchMid = findViewById(R.id.linear_search_mid);
     }
@@ -147,12 +143,9 @@ public class MapsActivity
 
         fabtn.getFabMenu().setOnClickListener(this);
         fabtn.getFabGPS().setOnClickListener(this);
-        fabtn.getFabPick().setOnClickListener(this);
-        fabtn.getFabClear().setOnClickListener(this);
+        fabtn.getFabUser().setOnClickListener(this);
         fabtn.getFabFull().setOnClickListener(this);
-        fabtn.getFabFix().setOnClickListener(this);
         fabtn.getFabLogout().setOnClickListener(this);
-        fabtn.getFabMypage().setOnClickListener(this);
 
         linearBtnSearchMid.setOnClickListener(this);
     }
@@ -167,7 +160,7 @@ public class MapsActivity
             @Override
             public void onPlaceSelected(Place place) {
                 LatLng latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
-                setCurrentMarker(true, latLng, place.getName().toString(), place.getAddress().toString());
+                setUserMarker(true, latLng, user.getEmail(), place.getName().toString());
                 presenter.saveSearchName(place.getName().toString());
             }
 
@@ -204,6 +197,7 @@ public class MapsActivity
     protected void onResume() {
         super.onResume();
         mapView.onResume();
+        isSend = true;
 
         if (googleApiClient != null)
             googleApiClient.connect();
@@ -215,7 +209,6 @@ public class MapsActivity
         mapView.onPause();
 
         if (googleApiClient != null && googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
             googleApiClient.stopAutoManage(this);
             googleApiClient.disconnect();
         }
@@ -231,13 +224,13 @@ public class MapsActivity
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        isSend = false;
 
         if (googleApiClient != null ) {
             googleApiClient.unregisterConnectionCallbacks(this);
             googleApiClient.unregisterConnectionFailedListener(this);
 
             if ( googleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
                 googleApiClient.disconnect();
             }
         }
@@ -279,18 +272,6 @@ public class MapsActivity
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(Constant.UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval(Constant.FASTEST_UPDATE_INTERVAL_MS);
-
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ( ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                LocationServices.FusedLocationApi
-                        .requestLocationUpdates(googleApiClient, locationRequest, this);
-            }
-        } else {
-            LocationServices.FusedLocationApi
-                    .requestLocationUpdates(googleApiClient, locationRequest, this);
-        }
     }
 
     @Override
@@ -307,21 +288,8 @@ public class MapsActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-        setCurrentMarker(true, Constant.DEFAULT_LOCATION, "위치정보 가져올 수 없음",
-                "위치 퍼미션과 GPS활성 여부 확인");
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.i(Constant.TAG, "onLocationChanged call..");
-        if(LOGIN_FLG == Constant.GOOGLE_LOGIN) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                // 다이어로그 로그인 토큰 만료 로 인한 재 로그인 유도
-                setResult(Constant.LOG_OUT);
-                finish();
-            }
-        }
+        setUserMarker(true, Constant.DEFAULT_LOCATION, user.getEmail(),
+                "위치정보 가져올 수 없음");
     }
 
     private void buildGoogleApiClient() {
@@ -354,7 +322,6 @@ public class MapsActivity
                 buildGoogleApiClient();
         }
         googleMap.setOnMapClickListener(this);
-        googleMap.setOnMarkerClickListener(this);
 
         CameraUpdate point = CameraUpdateFactory.newLatLngZoom(Constant.DEFAULT_LOCATION, 15.0f);
         googleMap.moveCamera(point);
@@ -365,6 +332,7 @@ public class MapsActivity
         } else {
             builder = new LatLngBounds.Builder();
             setGPS();
+            sendMarkerGetSync(); // call sync method
         }
     }
 
@@ -375,15 +343,7 @@ public class MapsActivity
 
         LatLng latLng = googleMap.getProjection().fromScreenLocation(screenPt);
 
-        setCurrentMarker(false, latLng, getResources().getString(R.string.msg_add), null);
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        clickedMarker = marker;
-        if(markerList.contains(clickedMarker))
-            fabtn.getFabFix().setImageDrawable(getResources().getDrawable(R.drawable.ic_fab_minus, null));
-        return false;
+        setUserMarker(false, latLng, user.getEmail(), null);
     }
 
     @Override
@@ -394,9 +354,6 @@ public class MapsActivity
                 setResult(Constant.LOG_OUT);
                 finish();
                 break;
-            case R.id.fab_mypage:
-                Intent intent = new Intent(this, MyPageActivity.class);
-                startActivity(intent);
             case R.id.fab_menu:
                 fabtn.anim();
                 break;
@@ -404,22 +361,17 @@ public class MapsActivity
                 setGPS();
                 fabtn.anim();
                 break;
-            case R.id.fab_pick:
-                pickMarker();
-                fabtn.anim();
-                break;
-            case R.id.fab_clear:
-                setGoogleMapClear();
+            case R.id.fab_user:
+                showUser();
                 fabtn.anim();
                 break;
             case R.id.fab_full:
+                showAllMarkersOnState();
                 showAllMarkers();
                 fabtn.anim();
                 break;
-            case R.id.fab_fix:
-                fixMarker();
-                break;
             case R.id.linear_search_mid:
+                isSend = false;
                 setAddressToPerson();
                 // 통신
                 presenter.sendToServer();
@@ -474,83 +426,22 @@ public class MapsActivity
             double longitude = gps.getLongitude();
 
             LatLng latLng = new LatLng(latitude, longitude);
-            setCurrentMarker(true, latLng, getResources().getString(R.string.msg_add), null);
+            setUserMarker(true, latLng,  user.getEmail(), null);
         } else
-            Toast.makeText(this,  getResources().getString(R.string.msg_gps_disable), Toast.LENGTH_SHORT).show();
+            setUserMarker(true, Constant.DEFAULT_LOCATION, user.getEmail(), getResources().getString(R.string.msg_gps_disable));
     }
 
-    // 지도에 직접 지정을 통한 마커 추가
-    private void pickMarker() {
-        LatLng latLng = googleMap.getCameraPosition().target;
-        setCurrentMarker(false, latLng, getResources().getString(R.string.msg_default), null);
-    }
-
-    // 마커설정 초기화
-    private void setMarkerClear() {
-        currentMarker = null;
-        clickedMarker = null;
-        fabtn.getFabFix().setImageDrawable(getResources().getDrawable(R.drawable.ic_fab_plus, null));
-    }
-
-    // 구글맵 설정 초기화
-    private void setGoogleMapClear() {
-        googleMap.clear();
-        markerList.clear();
-        Person.getInstance().clear();
-        setMarkerClear();
-
-        CameraUpdate point = CameraUpdateFactory.newLatLngZoom(Constant.DEFAULT_LOCATION, 15.0f);
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            googleMap.animateCamera(point);
-        else
-            googleMap.moveCamera(point);
-        builder = new LatLngBounds.Builder();
-    }
-
-    // 각 마커에 대한 저장 또는 삭제
-    private void fixMarker() {
-        if(clickedMarker != null) {
-            if(markerList.contains(clickedMarker))
-                removeMarker();
-            else
-                saveMarker(clickedMarker);
-            setMarkerClear();
-        } else {
-            if(currentMarker != null) {
-                saveMarker(currentMarker);
-                currentMarker = null;
+    private void showUser() {
+        if (userMarker != null) {
+            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                userMarker.showInfoWindow();
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userMarker.getPosition(), 15.0f));
             }
-            else
-                Toast.makeText(this, getResources().getString(R.string.msg_checkmarker), Toast.LENGTH_SHORT).show();
+            else {
+                userMarker.showInfoWindow();
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userMarker.getPosition(), 15.0f));
+            }
         }
-    }
-
-    // 마커 추가
-    private void saveMarker(Marker marker) {
-        ArrayList<Person> personList = Person.getInstance();
-        int id = personList.size() + 1;
-        String address = marker.getSnippet();
-        Position position = new Position(marker.getPosition().latitude, marker.getPosition().longitude);
-        Person person = new Person(getResources().getString(R.string.guest) + id, address, position);
-        personList.add(person);
-        markerList.add(marker);
-        marker.setTitle(person.getName());
-        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        marker.showInfoWindow();
-
-        builder.include(marker.getPosition());
-
-        Toast.makeText(this, person.getName() + getResources().getString(R.string.msg_savemarker), Toast.LENGTH_SHORT).show();
-    }
-
-    // 마커 삭제
-    private void removeMarker() {
-        int targetIndex = markerList.indexOf(clickedMarker);
-        markerList.remove(targetIndex);
-        ArrayList<Person> personList = Person.getInstance();
-        Person person = personList.remove(targetIndex);
-        Toast.makeText(this, person.getName() + getResources().getString(R.string.msg_removemarker), Toast.LENGTH_SHORT).show();
-        clickedMarker.remove();
     }
 
     // 마커 전체보기
@@ -570,11 +461,11 @@ public class MapsActivity
     }
 
     // 인스턴트 마커 표시
-    private void setCurrentMarker(boolean flag, LatLng latLng, String markerTitle, String markerSnippet) {
+    private void setUserMarker(boolean flag, LatLng latLng, String markerTitle, String markerSnippet) {
 
-        if ( currentMarker != null ) currentMarker.remove();
+        if ( userMarker != null ) userMarker.remove();
 
-        setMarkerClear();
+        userMarker = null;
 
         if ( latLng != null) {
 
@@ -583,15 +474,16 @@ public class MapsActivity
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            currentMarker = googleMap.addMarker(markerOptions);
-            currentMarker.showInfoWindow();
+            userMarker = googleMap.addMarker(markerOptions);
+            userMarker.showInfoWindow();
 
             if(flag) {
                 if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
                 else
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
             }
+            sendMarkerGetSync();
             return;
         }
 
@@ -600,12 +492,15 @@ public class MapsActivity
         markerOptions.title(markerTitle);
         markerOptions.snippet(markerSnippet);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        currentMarker = googleMap.addMarker(markerOptions);
+        userMarker = googleMap.addMarker(markerOptions);
+        userMarker.showInfoWindow();
 
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            googleMap.animateCamera(CameraUpdateFactory.newLatLng(Constant.DEFAULT_LOCATION));
-        else
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(Constant.DEFAULT_LOCATION));
+        if(flag) {
+            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Constant.DEFAULT_LOCATION, 15.0f));
+            else
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Constant.DEFAULT_LOCATION, 15.0f));
+        }
     }
 
     // 다음페이지로부터 뒤로가기 실행시 초기화된 메인페이지에 저장된 마커리스트 동기화
@@ -624,11 +519,66 @@ public class MapsActivity
             markerOptions.position(latLng);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             Marker marker = googleMap.addMarker(markerOptions);
+            marker.showInfoWindow();
             markerList.add(marker);
+
+            if (person.getName().equals(user.getEmail())) {
+                if (userMarker != null)
+                    userMarker.remove();
+                userMarker = marker;
+            }
 
             builder.include(markerOptions.getPosition());
         }
     }
+
+    // 2019.04.07 Inhyeok - add for getting sync
+    private void sendMarkerGetSync() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user == null) {
+            setResult(Constant.LOG_OUT);
+            finish();
+        } else {
+            UserPos userPos;
+            if (userMarker == null)
+                userPos = new UserPos(user.getEmail(), -1, -1);
+            else
+                userPos = new UserPos(user.getEmail(), userMarker.getPosition().latitude, userMarker.getPosition().longitude);
+            RetrofitCommunication.getInstance().sendUserPosForSync(userPos, handler);
+        }
+
+        if (isSend) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // recursive call
+                    sendMarkerGetSync();
+                }
+            }, 10000); // 10seconds
+        }
+    }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constant.REQUEST_LOCATION_SYNC_SUCCESS:
+                    Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_SUCCESS");
+                    Person.getInstance().clear();
+                    for (UserPos userPos: UserPos.getInstance()) {
+                        Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
+                    }
+                    break;
+                case Constant.REQUEST_LOCATION_SYNC_NONE:
+                    Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_NONE");
+                    break;
+                case Constant.REQUEST_LOCATION_SYNC_FAIL:
+                    Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_FAIL");
+                    break;
+            }
+        }
+    };
 }

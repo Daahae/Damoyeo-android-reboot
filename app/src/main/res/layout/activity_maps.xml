@@ -64,16 +64,6 @@
                     android:src="@drawable/ic_logout"
                     app:backgroundTint="@color/colorWhite"
                     app:elevation="6dp"/>
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_mypage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    android:src="@drawable/ic_my_profile"
-                    app:backgroundTint="@color/colorWhite"
-                    app:elevation="6dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -83,21 +73,10 @@
                 android:orientation="vertical">
 
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_fix"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:orientation="horizontal"
-                    android:src="@drawable/ic_fab_plus"
-                    app:backgroundTint="@color/colorWhite"
-                    app:elevation="6dp"/>
-
-                <android.support.design.widget.FloatingActionButton
                     android:id="@+id/fab_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:layout_marginTop="10dp"
                     android:src="@drawable/ic_fab_menu"
                     app:backgroundTint="@color/colorWhite"
                     app:elevation="6dp" />
@@ -115,24 +94,12 @@
                     app:pressedTranslationZ="12dp" />
 
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_pick"
+                    android:id="@+id/fab_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginTop="10dp"
                     android:src="@drawable/ic_fab_pick"
-                    android:visibility="invisible"
-                    app:backgroundTint="@color/colorWhite"
-                    app:elevation="6dp"
-                    app:pressedTranslationZ="12dp" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_clear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_fab_clear"
                     android:visibility="invisible"
                     app:backgroundTint="@color/colorWhite"
                     app:elevation="6dp"
