@@ -84,6 +84,10 @@ public class MapsActivity
 
     private Geocoder geocoder;
 
+    private FirebaseUser user;
+
+    private boolean isSend = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +111,12 @@ public class MapsActivity
             mapView.onCreate(savedInstanceState);
 
         setPlaceAutoComplete();
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            setResult(Constant.LOG_OUT);
+            finish();
+        }
     }
 
     private void initView() {
@@ -150,7 +160,7 @@ public class MapsActivity
             @Override
             public void onPlaceSelected(Place place) {
                 LatLng latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
-                setUserMarker(true, latLng, place.getName().toString(), place.getAddress().toString());
+                setUserMarker(true, latLng, user.getEmail(), place.getName().toString());
                 presenter.saveSearchName(place.getName().toString());
             }
 
@@ -187,6 +197,7 @@ public class MapsActivity
     protected void onResume() {
         super.onResume();
         mapView.onResume();
+        isSend = true;
 
         if (googleApiClient != null)
             googleApiClient.connect();
@@ -213,6 +224,7 @@ public class MapsActivity
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        isSend = false;
 
         if (googleApiClient != null ) {
             googleApiClient.unregisterConnectionCallbacks(this);
@@ -276,8 +288,8 @@ public class MapsActivity
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-        setUserMarker(true, Constant.DEFAULT_LOCATION, "위치정보 가져올 수 없음",
-                "위치 퍼미션과 GPS활성 여부 확인");
+        setUserMarker(true, Constant.DEFAULT_LOCATION, user.getEmail(),
+                "위치정보 가져올 수 없음");
     }
 
     private void buildGoogleApiClient() {
@@ -331,7 +343,7 @@ public class MapsActivity
 
         LatLng latLng = googleMap.getProjection().fromScreenLocation(screenPt);
 
-        setUserMarker(false, latLng, getResources().getString(R.string.msg_add), null);
+        setUserMarker(false, latLng, user.getEmail(), null);
     }
 
     @Override
@@ -354,10 +366,12 @@ public class MapsActivity
                 fabtn.anim();
                 break;
             case R.id.fab_full:
+                showAllMarkersOnState();
                 showAllMarkers();
                 fabtn.anim();
                 break;
             case R.id.linear_search_mid:
+                isSend = false;
                 setAddressToPerson();
                 // 통신
                 presenter.sendToServer();
@@ -412,17 +426,21 @@ public class MapsActivity
             double longitude = gps.getLongitude();
 
             LatLng latLng = new LatLng(latitude, longitude);
-            setUserMarker(true, latLng, getResources().getString(R.string.msg_add), null);
+            setUserMarker(true, latLng,  user.getEmail(), null);
         } else
-            setUserMarker(true, Constant.DEFAULT_LOCATION, getResources().getString(R.string.msg_gps_disable), null);
+            setUserMarker(true, Constant.DEFAULT_LOCATION, user.getEmail(), getResources().getString(R.string.msg_gps_disable));
     }
 
     private void showUser() {
         if (userMarker != null) {
-            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                googleMap.animateCamera(CameraUpdateFactory.newLatLng(userMarker.getPosition()));
-            else
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(userMarker.getPosition()));
+            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                userMarker.showInfoWindow();
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userMarker.getPosition(), 15.0f));
+            }
+            else {
+                userMarker.showInfoWindow();
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userMarker.getPosition(), 15.0f));
+            }
         }
     }
 
@@ -461,10 +479,11 @@ public class MapsActivity
 
             if(flag) {
                 if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
                 else
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f));
             }
+            sendMarkerGetSync();
             return;
         }
 
@@ -474,11 +493,14 @@ public class MapsActivity
         markerOptions.snippet(markerSnippet);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         userMarker = googleMap.addMarker(markerOptions);
+        userMarker.showInfoWindow();
 
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            googleMap.animateCamera(CameraUpdateFactory.newLatLng(Constant.DEFAULT_LOCATION));
-        else
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(Constant.DEFAULT_LOCATION));
+        if(flag) {
+            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Constant.DEFAULT_LOCATION, 15.0f));
+            else
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Constant.DEFAULT_LOCATION, 15.0f));
+        }
     }
 
     // 다음페이지로부터 뒤로가기 실행시 초기화된 메인페이지에 저장된 마커리스트 동기화
@@ -497,9 +519,16 @@ public class MapsActivity
             markerOptions.position(latLng);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             Marker marker = googleMap.addMarker(markerOptions);
+            marker.showInfoWindow();
             markerList.add(marker);
+
+            if (person.getName().equals(user.getEmail())) {
+                if (userMarker != null)
+                    userMarker.remove();
+                userMarker = marker;
+            }
 
             builder.include(markerOptions.getPosition());
         }
@@ -521,13 +550,15 @@ public class MapsActivity
             RetrofitCommunication.getInstance().sendUserPosForSync(userPos, handler);
         }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // recursive call
-                sendMarkerGetSync();
-            }
-        }, 10000); // 10seconds
+        if (isSend) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // recursive call
+                    sendMarkerGetSync();
+                }
+            }, 10000); // 10seconds
+        }
     }
 
     private Handler handler = new Handler() {
@@ -536,6 +567,10 @@ public class MapsActivity
             switch (msg.what) {
                 case Constant.REQUEST_LOCATION_SYNC_SUCCESS:
                     Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_SUCCESS");
+                    Person.getInstance().clear();
+                    for (UserPos userPos: UserPos.getInstance()) {
+                        Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
+                    }
                     break;
                 case Constant.REQUEST_LOCATION_SYNC_NONE:
                     Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_NONE");

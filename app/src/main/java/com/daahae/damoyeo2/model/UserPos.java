@@ -18,6 +18,8 @@ public class UserPos {
     @SerializedName("startLng")
     private double startLng;
 
+    private String address;
+
     public UserPos(String email, double startLat, double startLng) {
         this.email = email;
         this.startLat = startLat;
@@ -54,6 +56,14 @@ public class UserPos {
 
     public void setStartLng(double startLng) {
         this.startLng = startLng;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String toString() {
