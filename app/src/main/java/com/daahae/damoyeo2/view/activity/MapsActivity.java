@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.activity;
+package com.daahae.damoyeo2.view.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -31,8 +31,8 @@ import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
 import com.daahae.damoyeo2.presenter.MapsPresenter;
-import com.daahae.damoyeo2.view_pre.Constant;
-import com.daahae.damoyeo2.view_pre.function.GPSInfo;
+import com.daahae.damoyeo2.view.Constant;
+import com.daahae.damoyeo2.view.function.GPSInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;

@@ -1,15 +1,13 @@
 package com.daahae.damoyeo2.view_model;
 
 import android.databinding.BaseObservable;
-import android.util.Log;
 import android.view.View;
 
-import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.Category;
 import com.daahae.damoyeo2.model.CategoryInfo;
 import com.daahae.damoyeo2.navigator.UserNavigator;
-import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view.Constant;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,6 @@
 package com.daahae.damoyeo2.model;
 
-import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view.Constant;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 

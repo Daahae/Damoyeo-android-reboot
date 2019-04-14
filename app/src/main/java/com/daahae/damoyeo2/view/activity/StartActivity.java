@@ -22,7 +22,7 @@ import com.daahae.damoyeo2.model.UserLoginInfo;
 import com.daahae.damoyeo2.handler.BackPressCloseHandler;
 import com.daahae.damoyeo2.navigator.StartNavigator;
 import com.daahae.damoyeo2.view_model.StartViewModel;
-import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view.Constant;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -211,6 +211,9 @@ public class StartActivity extends AppCompatActivity implements StartNavigator{
                     startActivityForResult(intent, Constant.GOOGLE_LOGIN);
                     Log.v("화면전환", "Main");
                 }*/
+
+
+                Toast.makeText(getApplicationContext(), "안녕하세요, "+ Constant.nickname + "님", Toast.LENGTH_SHORT).show();
             }
         };
         RetrofitCommunication.getInstance().setLoginCheck(loginCallBack);
@@ -239,8 +242,6 @@ public class StartActivity extends AppCompatActivity implements StartNavigator{
                             // If sign in fails, display a message to the user.
                             Log.w(Constant.TAG, "signInWithCredential:failure", task.getException());
                         }
-
-                        Toast.makeText(getApplicationContext(), "안녕하세요, "+user.getDisplayName() + "님", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

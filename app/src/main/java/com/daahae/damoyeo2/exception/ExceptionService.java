@@ -6,7 +6,7 @@ import com.daahae.damoyeo2.model.BuildingRequest;
 import com.daahae.damoyeo2.model.TransportInfoList;
 import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
 import com.daahae.damoyeo2.model.UserRequest;
-import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view.Constant;
 
 public class ExceptionService {
 

@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.adapter;
+package com.daahae.damoyeo2.view.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,7 +15,7 @@ import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.model.Data;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Transport;
-import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view.Constant;
 
 import java.util.ArrayList;
 import java.util.Calendar;

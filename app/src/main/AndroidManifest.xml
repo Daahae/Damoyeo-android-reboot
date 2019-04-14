@@ -41,19 +41,19 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".view_pre.activity.LoginActivity"
+            android:name=".view.activity.LoginActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity
-            android:name=".view_pre.activity.MapsActivity"
+            android:name=".view.activity.MapsActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity
-            android:name=".view_pre.activity.CategoryActivity"
+            android:name=".view.activity.CategoryActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity
-            android:name=".view_pre.activity.DetailActivity"
+            android:name=".view.activity.DetailActivity"
             android:configChanges="keyboardHidden|orientation" />
-        <activity android:name=".view_pre.activity.MyPageActivity" />
-        <activity android:name=".view_pre.activity.TransportActivity" />
+        <activity android:name=".view.activity.MyPageActivity" />
+        <activity android:name=".view.activity.TransportActivity" />
         <activity android:name=".view.activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

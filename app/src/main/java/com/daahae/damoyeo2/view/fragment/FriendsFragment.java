@@ -11,10 +11,7 @@ import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.FriendsFragmentBinding;
-import com.daahae.damoyeo2.view.activity.MainActivity;
 import com.daahae.damoyeo2.view_model.MainViewModel;
-
-import java.util.zip.Inflater;
 
 public class FriendsFragment extends Fragment {
 

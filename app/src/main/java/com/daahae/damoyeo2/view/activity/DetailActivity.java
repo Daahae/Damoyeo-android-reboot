@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.activity;
+package com.daahae.damoyeo2.view.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -29,7 +29,7 @@ import com.daahae.damoyeo2.model.BuildingDetail;
 import com.daahae.damoyeo2.model.Landmark;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.presenter.DetailPresenter;
-import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view.Constant;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;

@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.activity;
+package com.daahae.damoyeo2.view.activity;
 
 import android.content.Intent;
 import android.graphics.Point;
@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.daahae.damoyeo2.R;
-import com.daahae.damoyeo2.view_pre.Constant;
+import com.daahae.damoyeo2.view.Constant;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;

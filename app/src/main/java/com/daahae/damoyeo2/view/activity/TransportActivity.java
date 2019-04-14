@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.activity;
+package com.daahae.damoyeo2.view.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +12,7 @@ import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.TransportInfoList;
 import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
-import com.daahae.damoyeo2.view_pre.adapter.TransportAdapter;
+import com.daahae.damoyeo2.view.adapter.TransportAdapter;
 
 public class TransportActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 

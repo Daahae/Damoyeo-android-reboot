@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:background="@color/colorWhite"
         android:orientation="vertical"
-        tools:context=".view.activity.SelectActivity">
+        tools:context=".view_2.activity.SelectActivity">
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"

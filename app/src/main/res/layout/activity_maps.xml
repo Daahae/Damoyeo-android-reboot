@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#000000"
-    tools:context=".view_pre.activity.MapsActivity">
+    tools:context=".view.activity.MapsActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

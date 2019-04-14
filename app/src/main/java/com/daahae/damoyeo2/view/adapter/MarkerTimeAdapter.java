@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.adapter;
+package com.daahae.damoyeo2.view.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

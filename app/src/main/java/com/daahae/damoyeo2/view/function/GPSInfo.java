@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.function;
+package com.daahae.damoyeo2.view.function;
 
 import android.app.AlertDialog;
 import android.app.Service;

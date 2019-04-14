@@ -1,4 +1,4 @@
-package com.daahae.damoyeo2.view_pre.activity;
+package com.daahae.damoyeo2.view.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,8 +9,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.daahae.damoyeo2.R;
-import com.daahae.damoyeo2.view_pre.Constant;
-import com.daahae.damoyeo2.view_pre.adapter.FriendsAdapter;
+import com.daahae.damoyeo2.view.Constant;
+import com.daahae.damoyeo2.view.adapter.FriendsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MyPageActivity extends AppCompatActivity implements View.OnClickListener{

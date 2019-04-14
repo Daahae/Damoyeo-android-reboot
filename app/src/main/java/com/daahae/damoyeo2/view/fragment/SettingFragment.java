@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
-import com.daahae.damoyeo2.databinding.FriendsFragmentBinding;
 import com.daahae.damoyeo2.databinding.SettingFragmentBinding;
 import com.daahae.damoyeo2.view_model.MainViewModel;
 

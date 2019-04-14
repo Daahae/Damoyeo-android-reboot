@@ -3,17 +3,12 @@ package com.daahae.damoyeo2.view_model;
 import android.databinding.ObservableField;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
-import com.daahae.damoyeo2.model.TransportLandmarkInfoList;
 import com.daahae.damoyeo2.navigator.MainNavigator;
-import com.daahae.damoyeo2.view.fragment.FriendsFragment;
-import com.daahae.damoyeo2.view_pre.Constant;
-
-import org.w3c.dom.Text;
+import com.daahae.damoyeo2.view.Constant;
 
 public class MainViewModel implements BaseViewModel {
 

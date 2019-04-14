@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.ChattingFragmentBinding;
-import com.daahae.damoyeo2.databinding.FriendsFragmentBinding;
 import com.daahae.damoyeo2.view_model.MainViewModel;
 
 public class ChattingFragment extends Fragment {

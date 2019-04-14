@@ -1,9 +1,8 @@
-package com.daahae.damoyeo2.view_pre;
+package com.daahae.damoyeo2.view;
 
 import android.content.Context;
 
 import com.daahae.damoyeo2.model.Position;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.maps.model.LatLng;
 
 public class Constant {
