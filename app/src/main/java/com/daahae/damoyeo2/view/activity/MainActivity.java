@@ -1,10 +1,12 @@
 package com.daahae.damoyeo2.view.activity;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.daahae.damoyeo2.R;
@@ -16,7 +18,7 @@ import com.daahae.damoyeo2.view.fragment.SettingFragment;
 import com.daahae.damoyeo2.view_model.MainViewModel;
 import com.daahae.damoyeo2.view.Constant;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements MainNavigator{
 
     private MainViewModel mainViewModel;
 
@@ -25,60 +27,33 @@ public class MainActivity extends AppCompatActivity{
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
 
-    private MainNavigator navigator;
+    private static Context context;
+    private static MainNavigator mainNavigator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        context = this;
 
         initViewModel();
 
         bindingView();
 
         initFragment();
-
-        setNavigator();
     }
 
-    private void setNavigator(){
-        navigator = new MainNavigator() {
-            @Override
-            public void convertFragment(View view) {
-                switch (view.getId()){
-                    case R.id.btn_person_main:
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.main_frame, FriendsFragment.getInstance())
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                    case R.id.btn_chatting_main:
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.main_frame, ChattingFragment.getInstance())
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                    case R.id.btn_setting_main:
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.main_frame, SettingFragment.getInstance())
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                    default:
-                        break;
-
-                }
-            }
-        };
-        mainViewModel.setMainNavigator(navigator);
+    public static MainNavigator getMainNavigator() {
+        return mainNavigator;
     }
 
     private void initViewModel(){
-        mainViewModel = MainViewModel.getInstance();
+        mainViewModel = new MainViewModel(this);
         Constant.context = this;
+    }
 
+    public static Context getMainContext(){
+        return context;
     }
 
     private void bindingView(){
@@ -96,4 +71,39 @@ public class MainActivity extends AppCompatActivity{
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void convertFragment(View view) {
+        switch (view.getId()){
+            case R.id.btn_person_main:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_frame, FriendsFragment.getInstance())
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.btn_chatting_main:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_frame, ChattingFragment.getInstance())
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.btn_setting_main:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_frame, SettingFragment.getInstance())
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            default:
+                break;
+
+        }
+
+    }
+
+    @Override
+    public void enterChattingRoom(int position) {
+        Log.v("item","chattingItemClick"+position);
+    }
 }

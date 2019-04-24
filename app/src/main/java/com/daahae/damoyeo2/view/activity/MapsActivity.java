@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
+import com.daahae.damoyeo2.databinding.ActivityMapsBinding;
 import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
@@ -35,6 +37,7 @@ import com.daahae.damoyeo2.model.UserPos;
 import com.daahae.damoyeo2.presenter.MapsPresenter;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.function.GPSInfo;
+import com.daahae.damoyeo2.view_model.ChattingRoomViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -88,10 +91,12 @@ public class MapsActivity
 
     private boolean isSend = true;
 
+    private ChattingRoomViewModel chattingRoomViewModel;
+    private ActivityMapsBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
 
         Constant.context = this;
 
@@ -105,6 +110,8 @@ public class MapsActivity
         initView();
         initAnimation();
         initListenter();
+
+        bindingView();
 
         MapsInitializer.initialize(getApplicationContext());
         if(mapView != null)
@@ -131,6 +138,16 @@ public class MapsActivity
         fabtn.setFabLogout((FloatingActionButton) findViewById(R.id.fab_logout));
 
         linearBtnSearchMid = findViewById(R.id.linear_search_mid);
+
+        chattingRoomViewModel = new ChattingRoomViewModel();
+    }
+
+
+    private void bindingView(){
+        binding =  DataBindingUtil.setContentView(this, R.layout.activity_start);
+        binding.setModel(chattingRoomViewModel);
+
+        chattingRoomViewModel.onCreate();
     }
 
     private void initAnimation() {

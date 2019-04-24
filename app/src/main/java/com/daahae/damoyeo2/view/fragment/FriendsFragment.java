@@ -11,9 +11,19 @@ import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.FragmentFriendsBinding;
+import com.daahae.damoyeo2.view.activity.MainActivity;
+import com.daahae.damoyeo2.view.adapter.FriendsAdapter;
+import com.daahae.damoyeo2.view_model.FriendsModel;
 import com.daahae.damoyeo2.view_model.MainViewModel;
 
+import java.util.ArrayList;
+
 public class FriendsFragment extends Fragment {
+
+    private FragmentFriendsBinding binding;
+    private FriendsModel friendsModel;
+    private ArrayList<FriendsModel> friendsModelArrayList;
+    private FriendsAdapter friendsAdapter;
 
     public FriendsFragment(){
 
@@ -34,9 +44,15 @@ public class FriendsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        MainViewModel model = new MainViewModel();
+        MainViewModel model = new MainViewModel(MainActivity.getMainNavigator());
         FragmentFriendsBinding binding = DataBindingUtil.getBinding(getView());
         binding.setModel(model);
         model.onCreate();
+
+        friendsModel = new FriendsModel();
+        friendsModelArrayList = friendsModel.getArrayListFriends();
+        friendsAdapter = new FriendsAdapter(getContext(),friendsModelArrayList);
+        binding.listView.setAdapter(friendsAdapter);
     }
+
 }

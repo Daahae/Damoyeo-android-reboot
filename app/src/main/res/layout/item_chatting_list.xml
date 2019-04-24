@@ -6,7 +6,7 @@
         <import type="android.view.View"/>
         <variable
             name="model"
-            type="com.daahae.damoyeo2.view_model.FriendsModel"/>
+            type="com.daahae.damoyeo2.view_model.ChattingListModel"/>
     </data>
 
     <LinearLayout

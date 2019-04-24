@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.FragmentSettingBinding;
+import com.daahae.damoyeo2.view.activity.MainActivity;
 import com.daahae.damoyeo2.view_model.MainViewModel;
 
 public class SettingFragment extends Fragment {
@@ -34,7 +35,7 @@ public class SettingFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        MainViewModel model = new MainViewModel();
+        MainViewModel model = new MainViewModel(MainActivity.getMainNavigator());
         FragmentSettingBinding binding = DataBindingUtil.getBinding(getView());
         binding.setModel(model);
         model.onCreate();

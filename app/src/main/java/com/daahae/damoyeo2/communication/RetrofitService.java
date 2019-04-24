@@ -42,9 +42,14 @@ public interface RetrofitService {
     @POST("category")
     Call<JsonObject> getCategoryInformation(@Field("categoryInfoArr") String categoryInfo);
 
-
     //@Multipart
     @FormUrlEncoded
     @POST("friend")
     Call<JsonObject> getFriendsList(@Field("friend") String user);
+
+
+    //@Multipart
+    @FormUrlEncoded
+    @POST("chatRoom")
+    Call<JsonObject> getChattingRoomInformation(@Field("chatRoom") String request);
 }
