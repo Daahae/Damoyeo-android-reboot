@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.FragmentFriendsBinding;
+import com.daahae.damoyeo2.view.activity.MainActivity;
 import com.daahae.damoyeo2.view.adapter.FriendsAdapter;
 import com.daahae.damoyeo2.view_model.FriendsModel;
 import com.daahae.damoyeo2.view_model.MainViewModel;
@@ -43,7 +44,7 @@ public class FriendsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        MainViewModel model = new MainViewModel();
+        MainViewModel model = new MainViewModel(MainActivity.getMainNavigator());
         FragmentFriendsBinding binding = DataBindingUtil.getBinding(getView());
         binding.setModel(model);
         model.onCreate();

@@ -1,5 +1,6 @@
 package com.daahae.damoyeo2.model;
 
+import com.daahae.damoyeo2.view.Constant;
 import com.google.gson.annotations.SerializedName;
 
 public class Category {
@@ -37,7 +38,8 @@ public class Category {
     @Override
     public String toString() {
         return "{" +
-                "\"mostLike\":" + mostLike +","
+                "\"email\":\"" + Constant.email +"\","
+                +"\"mostLike\":" + moreLike +","
                 +"\"moreLike\":" + moreLike +","
                 +"\"like\":" + like +"}";
     }

@@ -194,11 +194,11 @@ public class StartActivity extends AppCompatActivity implements StartNavigator{
             public void loginDataPath(LoginCheck loginCheck) {
                 Log.v("Login Check", loginCheck.getHistory()+"");
 
-
+                /*
                 Intent intent = new Intent(StartActivity.this, InterestActivity.class);
                 intent.putExtra(Constant.LOGIN, Constant.GOOGLE_LOGIN);
                 startActivityForResult(intent, Constant.GOOGLE_LOGIN);
-                /*
+                */
 
                 if (loginCheck.getHistory() == 0) {
                     Intent intent = new Intent(context, InterestActivity.class);
@@ -210,7 +210,7 @@ public class StartActivity extends AppCompatActivity implements StartNavigator{
                     intent.putExtra(Constant.LOGIN, Constant.GOOGLE_LOGIN);
                     startActivityForResult(intent, Constant.GOOGLE_LOGIN);
                     Log.v("화면전환", "Main");
-                }*/
+                }
 
 
                 Toast.makeText(getApplicationContext(), "안녕하세요, "+ Constant.nickname + "님", Toast.LENGTH_SHORT).show();

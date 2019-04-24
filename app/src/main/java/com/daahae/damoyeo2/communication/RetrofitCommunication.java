@@ -13,6 +13,7 @@ import com.daahae.damoyeo2.model.BuildingDetail;
 import com.daahae.damoyeo2.model.BuildingRequest;
 import com.daahae.damoyeo2.model.Category;
 import com.daahae.damoyeo2.model.CategoryInfo;
+import com.daahae.damoyeo2.model.ChattingRequest;
 import com.daahae.damoyeo2.model.LoginCheck;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
@@ -342,6 +343,30 @@ public class RetrofitCommunication {
         });
     }
 
+
+    private void sendChattingRoomRequest(ChattingRequest request){
+        String message = request.toString();
+        Log.v("메시지",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getChattingRoomInformation(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
+                    //JsonObject json = response.body();
+                    String json = response.body().toString();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","통신 실패");
+            }
+        });
+    }
+
     private void sendFriendsRequest(RequestForm request){
         String message = request.toString();
         Log.v("메시지",message+"");
@@ -414,6 +439,9 @@ public class RetrofitCommunication {
         return strMessage;
     }
 
+    public void setChattingRoomNumber(ChattingRequest chattingRequest){
+        sendChattingRoomRequest(chattingRequest);
+    }
     public void setCategoryInformation(CategoryInfo categoryInfo){
         sendCategoryInformation(categoryInfo);
     }

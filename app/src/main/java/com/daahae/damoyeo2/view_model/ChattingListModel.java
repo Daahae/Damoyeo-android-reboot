@@ -1,6 +1,8 @@
 package com.daahae.damoyeo2.view_model;
 
 import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.model.Friend;
@@ -48,4 +50,5 @@ public class ChattingListModel {
         return chattingListModelArrayList;
 
     }
+
 }
