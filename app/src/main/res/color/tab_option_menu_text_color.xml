@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/key_color_mango" android:state_enabled="true" android:state_pressed="true" />
+    <item android:color="@color/tab_option_menu_disable_color" android:state_enabled="false" />
+    <item android:color="@color/tab_option_menu_disable_color" android:state_enabled="false" android:state_pressed="true" />
+    <item android:color="@color/key_color_title" />
+</selector>
