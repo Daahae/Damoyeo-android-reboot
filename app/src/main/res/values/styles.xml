@@ -30,6 +30,51 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <!-- preference -->
+    <style name="Pref_Category_Title_Normal">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">#ffaaaaaa</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:layout_marginLeft">23dp</item>
+        <item name="android:layout_marginRight">23dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+    <style name="Pref_Category_Title_Large">
+        <item name="android:textSize">23dp</item>
+        <item name="android:textColor">#ffaaaaaa</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:layout_marginLeft">23dp</item>
+        <item name="android:layout_marginRight">23dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+    <style name="Pref_Category_Title_XLarge">
+        <item name="android:textSize">28dp</item>
+        <item name="android:textColor">#ffaaaaaa</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:layout_marginLeft">23dp</item>
+        <item name="android:layout_marginRight">23dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
+    <style name="Pref_Title_normal">
+        <item name="android:textSize">15dp</item>
+        <item name="android:textColor">@color/tab_option_menu_text_color</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    <style name="Pref_Title_Large">
+        <item name="android:textSize">25dp</item>
+        <item name="android:textColor">@color/tab_option_menu_text_color</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    <style name="Pref_Title_XLarge">
+        <item name="android:textSize">30dp</item>
+        <item name="android:textColor">@color/tab_option_menu_text_color</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

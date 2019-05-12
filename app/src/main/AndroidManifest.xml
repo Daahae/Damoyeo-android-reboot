@@ -61,6 +61,7 @@
         </activity>
         <activity android:name=".view.activity.InterestActivity" />
         <activity android:name=".view.activity.DirectionActivity" />
+        <activity android:name=".view.activity.MypageActivity" />
     </application>
 
 </manifest>

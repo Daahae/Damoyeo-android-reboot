@@ -49,5 +49,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     //flexBoxLayout
     implementation 'com.google.android:flexbox:0.3.0'
+    // preference
+    implementation "com.android.support:preference-v7:28.0.0"
 }
 apply plugin: 'com.google.gms.google-services'
