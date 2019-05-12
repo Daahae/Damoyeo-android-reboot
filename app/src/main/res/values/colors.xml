@@ -59,4 +59,9 @@
     <color name="bus_gansun">#0068B7</color>
     <color name="bus_gwangyeok">#E60012</color>
     <!-- transportation color end -->
+
+    <color name="tab_line_divider">#cccccc</color>
+    <color name="key_color_mango">#ffa800</color>
+    <color name="tab_option_menu_disable_color">#cccccc</color>
+    <color name="key_color_title">#000000</color>
 </resources>

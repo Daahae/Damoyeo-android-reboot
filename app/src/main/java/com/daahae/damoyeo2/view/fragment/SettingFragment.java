@@ -1,43 +1,62 @@
 package com.daahae.damoyeo2.view.fragment;
 
-import android.databinding.DataBindingUtil;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.daahae.damoyeo2.R;
-import com.daahae.damoyeo2.databinding.FragmentSettingBinding;
-import com.daahae.damoyeo2.view.activity.MainActivity;
-import com.daahae.damoyeo2.view_model.MainViewModel;
+import com.daahae.damoyeo2.view.VersionDialog;
+import com.daahae.damoyeo2.view.activity.InterestActivity;
+import com.daahae.damoyeo2.view.activity.MypageActivity;
 
-public class SettingFragment extends Fragment {
+public class SettingFragment extends PreferenceFragmentCompat {
 
-    public SettingFragment(){
+    private final String TAG = "SETTING_FRAGMENT";
 
-    }
+    private Preference connectedAccount;
+    private Preference changeInterest;
+    private Preference appVersion;
 
-    public static SettingFragment getInstance(){
+    public static SettingFragment getInstance() {
         return new SettingFragment();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void onCreatePreferences(Bundle bundle, String s) {
+        addPreferencesFromResource(R.xml.pref_settings);
 
-        return DataBindingUtil.inflate(inflater, R.layout.fragment_setting, container, false).getRoot();
+        connectedAccount = findPreference("connectedAccount");
+        connectedAccount.setOnPreferenceClickListener(onPreferenceClickListener);
+
+        changeInterest = findPreference("changeInterest");
+        changeInterest.setOnPreferenceClickListener(onPreferenceClickListener);
+
+        appVersion = findPreference("appVersion");
+        appVersion.setOnPreferenceClickListener(onPreferenceClickListener);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private Preference.OnPreferenceClickListener onPreferenceClickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            switch (preference.getKey()) {
+                case "connectedAccount":
+                    Intent intentMypage = new Intent(getActivity(), MypageActivity.class);
+                    startActivity(intentMypage);
+                    break;
 
-        MainViewModel model = new MainViewModel(MainActivity.getMainNavigator());
-        FragmentSettingBinding binding = DataBindingUtil.getBinding(getView());
-        binding.setModel(model);
-        model.onCreate();
-    }
+                case "changeInterest":
+                    Intent intentInterest = new Intent(getActivity(), InterestActivity.class);
+                    intentInterest.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intentInterest);
+                    break;
+
+                case "appVersion":
+                    VersionDialog dialog = new VersionDialog(getActivity());
+                    dialog.show();
+                    break;
+            }
+            return false;
+        }
+    };
 }

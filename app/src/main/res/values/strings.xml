@@ -50,4 +50,12 @@
     <string name="tv_arrow_text">  \u003E  </string>
     <string name="tv_end_name_text">신분당선강남역</string>
     <string name="tv_get_off_text">하차</string>
+
+    <!-- setting -->
+    <string name="settings_account_title">설정</string>
+    <string name="settings_connected_account">계정 정보</string>
+    <string name="settings_change_interest">관심사 변경</string>
+    <string name="settings_version">버전정보</string>
+    <string name="settings_email_title">이메일</string>
+    <string name="settings_nickname_title">닉네임</string>
 </resources>
