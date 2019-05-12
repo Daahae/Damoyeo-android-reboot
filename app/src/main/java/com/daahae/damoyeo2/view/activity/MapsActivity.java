@@ -25,11 +25,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
-import com.daahae.damoyeo2.databinding.ActivityMapsBinding;
 import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
@@ -91,12 +91,15 @@ public class MapsActivity
 
     private boolean isSend = true;
 
-    private ChattingRoomViewModel chattingRoomViewModel;
-    private ActivityMapsBinding binding;
+    private ImageButton btnBack;
+
+    //private ChattingRoomViewModel chattingRoomViewModel;
+    //private ActivityMapsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
         Constant.context = this;
 
@@ -111,7 +114,7 @@ public class MapsActivity
         initAnimation();
         initListenter();
 
-        bindingView();
+        //bindingView();
 
         MapsInitializer.initialize(getApplicationContext());
         if(mapView != null)
@@ -139,16 +142,19 @@ public class MapsActivity
 
         linearBtnSearchMid = findViewById(R.id.linear_search_mid);
 
-        chattingRoomViewModel = new ChattingRoomViewModel();
+        btnBack = findViewById(R.id.btn_back_maps);
+        //chattingRoomViewModel = new ChattingRoomViewModel();
     }
 
-
+/*
     private void bindingView(){
-        binding =  DataBindingUtil.setContentView(this, R.layout.activity_start);
+        binding =  DataBindingUtil.setContentView(this, R.layout.activity_maps);
         binding.setModel(chattingRoomViewModel);
 
         chattingRoomViewModel.onCreate();
     }
+    */
+
 
     private void initAnimation() {
 
@@ -165,6 +171,8 @@ public class MapsActivity
         fabtn.getFabLogout().setOnClickListener(this);
 
         linearBtnSearchMid.setOnClickListener(this);
+
+        btnBack.setOnClickListener(this);
     }
 
     // 구글 자동완성
@@ -368,9 +376,14 @@ public class MapsActivity
         switch (v.getId()) {
 
             case R.id.fab_logout:
+                //TODO:chatting 보이기
+                break;
+            /*
+            case R.id.fab_logout:
                 setResult(Constant.LOG_OUT);
                 finish();
                 break;
+                */
             case R.id.fab_menu:
                 fabtn.anim();
                 break;
@@ -392,6 +405,9 @@ public class MapsActivity
                 setAddressToPerson();
                 // 통신
                 presenter.sendToServer();
+                break;
+            case R.id.btn_back_maps:
+                onBackPressed();
                 break;
         }
     }

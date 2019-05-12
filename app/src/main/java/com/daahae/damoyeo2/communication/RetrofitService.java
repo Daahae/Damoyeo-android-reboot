@@ -51,5 +51,10 @@ public interface RetrofitService {
     //@Multipart
     @FormUrlEncoded
     @POST("chatRoom")
-    Call<JsonObject> getChattingRoomInformation(@Field("chatRoom") String request);
+    Call<JsonObject> getRoomList(@Field("chatRoom") String user);
+
+    //@Multipart
+    @FormUrlEncoded
+    @POST("detailChatRoom")
+    Call<JsonObject> getChattingRoomInformation(@Field("detailChatRoom") String request);
 }

@@ -1,10 +1,16 @@
 package com.daahae.damoyeo2.view_model;
 
 import android.content.Context;
+import android.databinding.BindingAdapter;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.widget.EditText;
 
 import com.daahae.damoyeo2.R;
+import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.Friend;
+import com.daahae.damoyeo2.model.FriendArr;
 import com.daahae.damoyeo2.view.Constant;
 
 import java.util.ArrayList;
@@ -19,7 +25,7 @@ public class FriendsModel {
 
     public FriendsModel(Friend friend){
         this.name = friend.name;
-        this.profilePicture = friend.profilePicture;
+        this.profilePicture = Constant.context.getResources().getDrawable(R.drawable.ic_friend_profile);
     }
 
     public String getName() {
@@ -38,16 +44,12 @@ public class FriendsModel {
         this.profilePicture = profilePicture;
     }
 
-    public ArrayList<FriendsModel> getArrayListFriends(){
-        ArrayList<FriendsModel> friendsModelArrayList = new ArrayList<>();
-        FriendsModel friendsModel1 = new FriendsModel(new Friend("안종희",Constant.context.getResources().getDrawable(R.drawable.ic_friend_profile)));
-        FriendsModel friendsModel2 = new FriendsModel(new Friend("허진규",Constant.context.getResources().getDrawable(R.drawable.ic_friend_profile)));
-        FriendsModel friendsModel3 = new FriendsModel(new Friend("김태우",Constant.context.getResources().getDrawable(R.drawable.ic_friend_profile)));
-        FriendsModel friendsModel4 = new FriendsModel(new Friend("강인혁",Constant.context.getResources().getDrawable(R.drawable.ic_friend_profile)));
-        friendsModelArrayList.add(friendsModel1);
-        friendsModelArrayList.add(friendsModel2);
-        friendsModelArrayList.add(friendsModel3);
-        friendsModelArrayList.add(friendsModel4);
+    public ArrayList<FriendsModel> getArrayListFriends(FriendArr friendArr){
+        final ArrayList<FriendsModel> friendsModelArrayList = new ArrayList<>();
+        for(int i=0;i<friendArr.getFriends().size();i++){
+            FriendsModel friendsModel = new FriendsModel(friendArr.getFriends().get(i));
+            friendsModelArrayList.add(friendsModel);
+        }
         return friendsModelArrayList;
 
     }

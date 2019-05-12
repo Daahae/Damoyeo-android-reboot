@@ -14,6 +14,8 @@ import com.daahae.damoyeo2.model.BuildingRequest;
 import com.daahae.damoyeo2.model.Category;
 import com.daahae.damoyeo2.model.CategoryInfo;
 import com.daahae.damoyeo2.model.ChattingRequest;
+import com.daahae.damoyeo2.model.ChattingRoomArr;
+import com.daahae.damoyeo2.model.FriendArr;
 import com.daahae.damoyeo2.model.LoginCheck;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
@@ -52,6 +54,8 @@ public class RetrofitCommunication {
     private TransPathList transportList;
     private BuildingArr buildingList;
     private BuildingDetail buildingDetail;
+    private FriendArr friendList;
+    private ChattingRoomArr chattingRoomArr;
     private LoginCheck loginCheck;
 
     private UserCallBack userCallBack;
@@ -60,6 +64,7 @@ public class RetrofitCommunication {
     private UserLandmarkBack userLandmarkBack;
     private LoginCallBack loginCallBack;
     private FriendsListCallBack friendsListCallBack;
+    private ChattingRoomListCallBack chattingRoomListCallBack;
 
     private static RetrofitCommunication instance = new RetrofitCommunication();
 
@@ -85,9 +90,12 @@ public class RetrofitCommunication {
     }
 
     public interface FriendsListCallBack {
-        void friendsListDataPath(FriendsListCallBack friendsListCallBack);
+        void friendsListDataPath(FriendArr friendArr);
     }
 
+    public interface ChattingRoomListCallBack {
+        void chattingRoomListDataPath(ChattingRoomArr chattingRoomArr);
+    }
     public interface UserLandmarkBack {
         void userLandmarkDataPath(ArrayList<String> totalTimes);
         void disconnectServer();
@@ -115,6 +123,9 @@ public class RetrofitCommunication {
     }
     public void setFriendsListCallBack(FriendsListCallBack friendsListCallBack){
         this.friendsListCallBack = friendsListCallBack;
+    }
+    public void setChattingRoomListCallBack(ChattingRoomListCallBack chattingRoomListCallBack){
+        this.chattingRoomListCallBack = chattingRoomListCallBack;
     }
     private void init() {
         retrofitService = retrofit.create(RetrofitService.class);
@@ -344,7 +355,7 @@ public class RetrofitCommunication {
     }
 
 
-    private void sendChattingRoomRequest(ChattingRequest request){
+    private void sendDetailChattingRoomRequest(ChattingRequest request){
         String message = request.toString();
         Log.v("메시지",message+"");
 
@@ -378,8 +389,34 @@ public class RetrofitCommunication {
                 if (response.isSuccessful()) {
                     Log.v("알림", response.toString());
                     Log.v("전체", response.body().toString());
+                    JsonObject json = response.body();
+                    friendList = new Gson().fromJson(json, FriendArr.class);
+                    if(friendsListCallBack!=null) friendsListCallBack.friendsListDataPath(friendList);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","통신 실패");
+            }
+        });
+    }
+
+    private void sendRoomListRequest(RequestForm request){
+        String message = request.toString();
+        Log.v("메시지",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getRoomList(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
                     //JsonObject json = response.body();
                     String json = response.body().toString();
+                    chattingRoomArr = new Gson().fromJson(json, ChattingRoomArr.class);
+                    if(chattingRoomListCallBack!=null) chattingRoomListCallBack.chattingRoomListDataPath(chattingRoomArr);
                 }
             }
 
@@ -439,11 +476,18 @@ public class RetrofitCommunication {
         return strMessage;
     }
 
-    public void setChattingRoomNumber(ChattingRequest chattingRequest){
-        sendChattingRoomRequest(chattingRequest);
+    public void setDetailChattingRoomNumber(ChattingRequest chattingRequest){
+        sendDetailChattingRoomRequest(chattingRequest);
     }
+
     public void setCategoryInformation(CategoryInfo categoryInfo){
         sendCategoryInformation(categoryInfo);
+    }
+
+    public void sendRoomListRequest(){
+        RequestForm request = new RequestForm();
+        request.setEmail(Constant.email);
+        sendRoomListRequest(request);
     }
 
     public void sendFriendsListRequest(){

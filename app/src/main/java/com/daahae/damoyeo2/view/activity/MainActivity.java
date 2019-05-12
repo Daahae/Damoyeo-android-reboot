@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.ActivityMainBinding;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
     private static Context context;
     private static MainNavigator mainNavigator;
 
+    private LinearLayout bottomNavigator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
     private void initViewModel(){
         mainViewModel = new MainViewModel(this);
         Constant.context = this;
+        bottomNavigator = findViewById(R.id.linear_navigation_main);
     }
 
     public static Context getMainContext(){
@@ -69,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
         fragmentTransaction.replace( R.id.main_frame, FriendsFragment.getInstance());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 
     @Override
@@ -106,4 +115,10 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
     public void enterChattingRoom(int position) {
         Log.v("item","chattingItemClick"+position);
     }
+
+    @Override
+    public void hideNavigator() {
+
+    }
+
 }

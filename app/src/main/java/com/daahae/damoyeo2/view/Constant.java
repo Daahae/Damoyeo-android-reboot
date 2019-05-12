@@ -111,4 +111,9 @@ public class Constant {
   
     public static String email;
     public static String nickname;
+
+    public static final int FRIEND_FRAGMENT = 4000;
+    public static final int CHATTINGROOM_FRAGMENT = 4001;
+    public static final int SETTING_FRAGMENT = 4002;
+    public static int FRAGMENT=4000;
 }

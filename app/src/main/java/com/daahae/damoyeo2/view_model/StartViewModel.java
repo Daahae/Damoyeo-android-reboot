@@ -4,7 +4,8 @@ import android.databinding.Bindable;
 import android.databinding.BaseObservable;
 import android.view.View;
 
-import com.android.databinding.library.baseAdapters.BR;
+import com.android.databinding.library.baseAdapters.*;
+
 import com.daahae.damoyeo2.navigator.StartNavigator;
 
 public class StartViewModel extends BaseObservable implements BaseViewModel {
@@ -21,6 +22,7 @@ public class StartViewModel extends BaseObservable implements BaseViewModel {
         return isVisible;
     }
 
+    @Bindable
     public void setVisible(boolean isVisible){
         this.isVisible = isVisible;
         notifyPropertyChanged(BR.loading);
