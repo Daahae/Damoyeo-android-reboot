@@ -17,17 +17,17 @@
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:icon="@mipmap/icon_main"
+        android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/icon_main"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".view.activity.ScheduleActivity"></activity>
         <activity
             android:name=".view.activity.MainActivity"
-            android:label="@string/title_activity_main2"></activity>
-        <!-- Bitmap too large to be uploaded into a texture -->
+            android:label="@string/title_activity_main2" /> <!-- Bitmap too large to be uploaded into a texture -->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

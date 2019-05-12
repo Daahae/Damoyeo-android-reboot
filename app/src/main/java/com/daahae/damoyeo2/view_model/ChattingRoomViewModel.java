@@ -1,10 +1,14 @@
 package com.daahae.damoyeo2.view_model;
 
+import android.databinding.ObservableField;
 import android.view.View;
 
 public class ChattingRoomViewModel implements BaseViewModel {
+
+
     @Override
     public void onCreate() {
+        //txtTitle =
 
     }
 
@@ -22,6 +26,7 @@ public class ChattingRoomViewModel implements BaseViewModel {
     public void onDestroy() {
 
     }
+
 
     public View.OnClickListener backClickListener = new View.OnClickListener() {
         @Override

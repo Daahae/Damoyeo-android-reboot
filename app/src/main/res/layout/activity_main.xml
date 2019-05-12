@@ -30,12 +30,21 @@
                 android:text="@{model.txtTitle}"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/basic_margin"
+                android:onClick="@{model.addButtonListener}"
+                android:visibility="@{model.isAddButtonVisible? View.VISIBLE:View.GONE}"
+                app:srcCompat="@drawable/ic_add" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grayButtonEdge" />
+            android:layout_height="3dp"
+            android:background="@drawable/shadow"/>
 
         <FrameLayout
             android:id="@+id/main_frame"
@@ -44,9 +53,11 @@
             android:layout_weight="1"/>
 
         <LinearLayout
+            android:id="@+id/linear_navigation_main"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="@{model.isShowBottomNavigator? View.VISIBLE:View.GONE}">
 
             <ImageButton
                 android:id="@+id/btn_person_main"
@@ -54,13 +65,13 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:onClick="@{model.replaceFragmentListener}"
                 android:background="@color/colorWhite"
+                android:onClick="@{model.replaceFragmentListener}"
+                android:scaleType="fitCenter"
+                android:src="@{model.btnPerson}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:src="@{model.btnPerson}"/>
+                app:layout_constraintRight_toRightOf="parent" />
 
             <ImageButton
                 android:id="@+id/btn_chatting_main"
@@ -68,13 +79,13 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:onClick="@{model.replaceFragmentListener}"
                 android:background="@color/colorWhite"
+                android:onClick="@{model.replaceFragmentListener}"
+                android:scaleType="fitCenter"
+                android:src="@{model.btnChatting}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:src="@{model.btnChatting}"/>
+                app:layout_constraintRight_toRightOf="parent" />
 
             <ImageButton
                 android:id="@+id/btn_setting_main"
@@ -82,13 +93,13 @@
                 android:layout_height="28dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:onClick="@{model.replaceFragmentListener}"
                 android:background="@color/colorWhite"
+                android:onClick="@{model.replaceFragmentListener}"
+                android:scaleType="fitCenter"
+                android:src="@{model.btnSetting}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:src="@{model.btnSetting}"/>
+                app:layout_constraintRight_toRightOf="parent" />
         </LinearLayout>
 
     </LinearLayout>

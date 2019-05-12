@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="android.view.View"/>
@@ -22,7 +22,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+
+                <EditText
+                    android:id="@+id/editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/box_gray_full"
+                    android:ems="10"
+                    android:singleLine="true"
+                    android:inputType="textPersonName"
+                    android:padding="7dp"
+                    android:drawableLeft="@drawable/ic_search"
+                    android:drawablePadding="10dp"
+                    android:textColor="#FCFCFC"
+                    app:onFocusChange="@{model.onFocusChangeListener}"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -40,7 +57,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="15dp"
+                    android:padding="10dp"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -88,6 +105,7 @@
 
             </LinearLayout>
         </ScrollView>
+
 
     </LinearLayout>
 </layout>
