@@ -66,16 +66,23 @@ public class ChattingFragment extends Fragment {
             @Override
             public void chattingRoomListDataPath(ChattingRoomArr chattingRoomArr) {
                 FragmentChattingBinding binding = DataBindingUtil.getBinding(getView());
-                Log.v("chattingArr",chattingRoomArr.getChattingRooms().size()+"");
-                chattingListModelArrayList = chattingListModel.getArrayListChattingList(chattingRoomArr);
+                chattingListModelArrayList = new ArrayList<>();
 
-                chattingListAdapter = new ChattingListAdapter(getContext(),chattingListModelArrayList);
-                binding.listView.setAdapter(chattingListAdapter);
+                if(chattingRoomArr != null||chattingRoomArr.getChattingRooms() != null) {
 
-                model.setChattingList(binding, chattingRoomArr);
+                    chattingListModelArrayList = chattingListModel.getArrayListChattingList(chattingRoomArr);
+
+                    chattingListAdapter = new ChattingListAdapter(getContext(), chattingListModelArrayList);
+                    binding.listView.setAdapter(chattingListAdapter);
+
+                    model.setChattingList(binding, chattingRoomArr);
+                }
             }
         };
 
         RetrofitCommunication.getInstance().setChattingRoomListCallBack(chattingRoomListCallBack);
+
     }
+
+
 }

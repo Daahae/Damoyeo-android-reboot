@@ -15,16 +15,18 @@ import com.daahae.damoyeo2.model.Category;
 import com.daahae.damoyeo2.model.CategoryInfo;
 import com.daahae.damoyeo2.model.ChattingRequest;
 import com.daahae.damoyeo2.model.ChattingRoomArr;
+import com.daahae.damoyeo2.model.FriendAcceptRequestForm;
 import com.daahae.damoyeo2.model.FriendArr;
+import com.daahae.damoyeo2.model.FriendAddRequestForm;
 import com.daahae.damoyeo2.model.LoginCheck;
+import com.daahae.damoyeo2.model.FriendAcceptMessage;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.RequestForm;
+import com.daahae.damoyeo2.model.UserArr;
 import com.daahae.damoyeo2.model.UserLoginInfo;
 import com.daahae.damoyeo2.model.UserPos;
 import com.daahae.damoyeo2.model.SearchPubTransPath;
-import com.daahae.damoyeo2.model.MidInfo;
-import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.TransPathList;
 import com.daahae.damoyeo2.model.UserRequest;
 import com.daahae.damoyeo2.view.Constant;
@@ -57,6 +59,8 @@ public class RetrofitCommunication {
     private FriendArr friendList;
     private ChattingRoomArr chattingRoomArr;
     private LoginCheck loginCheck;
+    private FriendAcceptMessage friendAcceptMessage;
+    private UserArr userArr;
 
     private UserCallBack userCallBack;
     private BuildingCallBack buildingCallBack;
@@ -65,6 +69,8 @@ public class RetrofitCommunication {
     private LoginCallBack loginCallBack;
     private FriendsListCallBack friendsListCallBack;
     private ChattingRoomListCallBack chattingRoomListCallBack;
+    private AddFriendCallBack addFriendCallBack;
+    private DetailChattingRoomCallBack detailChattingRoomCallBack;
 
     private static RetrofitCommunication instance = new RetrofitCommunication();
 
@@ -93,9 +99,19 @@ public class RetrofitCommunication {
         void friendsListDataPath(FriendArr friendArr);
     }
 
+    public interface AddFriendCallBack {
+        void addFriendDataPath(FriendAcceptMessage friendAcceptMessage);
+    }
+
     public interface ChattingRoomListCallBack {
         void chattingRoomListDataPath(ChattingRoomArr chattingRoomArr);
     }
+
+
+    public interface DetailChattingRoomCallBack {
+        void detailChattingRoomDataPath(UserArr userArr);
+    }
+
     public interface UserLandmarkBack {
         void userLandmarkDataPath(ArrayList<String> totalTimes);
         void disconnectServer();
@@ -124,8 +140,14 @@ public class RetrofitCommunication {
     public void setFriendsListCallBack(FriendsListCallBack friendsListCallBack){
         this.friendsListCallBack = friendsListCallBack;
     }
+    public void setAddFriendCallBack(AddFriendCallBack addFriendCallBack){
+        this.addFriendCallBack = addFriendCallBack;
+    }
     public void setChattingRoomListCallBack(ChattingRoomListCallBack chattingRoomListCallBack){
         this.chattingRoomListCallBack = chattingRoomListCallBack;
+    }
+    public void setDetailChattingRoomCallBack(DetailChattingRoomCallBack detailChattingRoomCallBack){
+        this.detailChattingRoomCallBack = detailChattingRoomCallBack;
     }
     private void init() {
         retrofitService = retrofit.create(RetrofitService.class);
@@ -357,7 +379,7 @@ public class RetrofitCommunication {
 
     private void sendDetailChattingRoomRequest(ChattingRequest request){
         String message = request.toString();
-        Log.v("메시지",message+"");
+        Log.v("메시지 detailChatRoom",message+"");
 
         final Call<JsonObject> comment = retrofitService.getChattingRoomInformation(message);
         comment.enqueue(new Callback<JsonObject>() {
@@ -367,7 +389,9 @@ public class RetrofitCommunication {
                     Log.v("알림", response.toString());
                     Log.v("전체", response.body().toString());
                     //JsonObject json = response.body();
-                    String json = response.body().toString();
+                    JsonObject json = response.body();
+                    userArr = new Gson().fromJson(json, UserArr.class);
+                    if(detailChattingRoomCallBack != null) detailChattingRoomCallBack.detailChattingRoomDataPath(userArr);
                 }
             }
 
@@ -402,9 +426,59 @@ public class RetrofitCommunication {
         });
     }
 
-    private void sendRoomListRequest(RequestForm request){
+    private void sendAddFriend(FriendAddRequestForm request){
         String message = request.toString();
         Log.v("메시지",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getAddFriend(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
+                    String json = response.body().toString();
+                    friendAcceptMessage = new Gson().fromJson(json, FriendAcceptMessage.class);
+                    if(addFriendCallBack!=null) addFriendCallBack.addFriendDataPath(friendAcceptMessage);
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","통신 실패");
+            }
+        });
+    }
+
+    private void sendAcceptFriend(FriendAcceptRequestForm request){
+        String message = request.toString();
+        Log.v("메시지",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getAcceptFriend(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
+                    String json = response.body().toString();
+                    friendAcceptMessage = new Gson().fromJson(json, FriendAcceptMessage.class);
+                    if(addFriendCallBack!=null) addFriendCallBack.addFriendDataPath(friendAcceptMessage);
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","통신 실패");
+            }
+        });
+    }
+
+    private void sendRoomListRequest(RequestForm request){
+        String message = request.toString();
+        Log.v("메시지 chatRoom",message+"");
 
         final Call<JsonObject> comment = retrofitService.getRoomList(message);
         comment.enqueue(new Callback<JsonObject>() {
@@ -474,6 +548,14 @@ public class RetrofitCommunication {
         strMessage +=
                 "]";
         return strMessage;
+    }
+
+    public void setAddFriend(FriendAddRequestForm friendAddRequestForm){
+        sendAddFriend(friendAddRequestForm);
+    }
+
+    public void setAcceptFriend(FriendAcceptRequestForm friendAcceptRequestForm){
+        sendAcceptFriend(friendAcceptRequestForm);
     }
 
     public void setDetailChattingRoomNumber(ChattingRequest chattingRequest){

@@ -85,7 +85,7 @@ public class CategoryActivity
 
     private MarkerTimeAdapter markerTimeAdapter;
     private ListView listMarkerTime;
-    private Button btnAllMarkerList;
+    private ImageButton btnAllMarkerList;
 
     private SlidingDrawer slidingDrawer;
 

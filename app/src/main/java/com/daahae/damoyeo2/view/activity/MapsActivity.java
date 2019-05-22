@@ -23,16 +23,20 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SlidingDrawer;
+import android.widget.TextView;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
+import com.daahae.damoyeo2.model.UserArr;
 import com.daahae.damoyeo2.model.UserPos;
 import com.daahae.damoyeo2.presenter.MapsPresenter;
 import com.daahae.damoyeo2.view.Constant;
@@ -92,7 +96,15 @@ public class MapsActivity
     private boolean isSend = true;
 
     private ImageButton btnBack;
+    private TextView txtTitle;
+    private String title;
 
+    private ArrayList<String> emails = new ArrayList<>();
+    private ArrayList<String> names = new ArrayList<>();
+    private TextView txtMarkerTotal;
+    private TextView txtPeopleTotal;
+
+    private int markerCount=0;
     //private ChattingRoomViewModel chattingRoomViewModel;
     //private ActivityMapsBinding binding;
 
@@ -100,6 +112,12 @@ public class MapsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Intent intent = getIntent();
+        title = intent.getStringExtra("roomTitle");
+        //emails = intent.getStringArrayListExtra("roomEmails");
+
+        Log.v("roomEmails(Maps)",emails.toString());
 
         Constant.context = this;
 
@@ -127,6 +145,24 @@ public class MapsActivity
             setResult(Constant.LOG_OUT);
             finish();
         }
+
+        txtTitle.setText(title);
+
+        connectRetrofit();
+    }
+
+    private void connectRetrofit(){
+        RetrofitCommunication.DetailChattingRoomCallBack detailChattingRoomCallBack = new RetrofitCommunication.DetailChattingRoomCallBack() {
+            @Override
+            public void detailChattingRoomDataPath(UserArr userArr) {
+                txtPeopleTotal.setText(userArr.getCount()+"");
+                for(int i=0;i<userArr.getUserArrayList().get(0).size();i++) {
+                    emails.add(userArr.getUserArrayList().get(0).get(i).email);
+                    names.add(userArr.getUserArrayList().get(0).get(i).nickname);
+                }
+            }
+        };
+        RetrofitCommunication.getInstance().setDetailChattingRoomCallBack(detailChattingRoomCallBack);
     }
 
     private void initView() {
@@ -143,6 +179,10 @@ public class MapsActivity
         linearBtnSearchMid = findViewById(R.id.linear_search_mid);
 
         btnBack = findViewById(R.id.btn_back_maps);
+        txtTitle = findViewById(R.id.txt_chatting_room_name);
+
+        txtPeopleTotal = findViewById(R.id.txt_people_total_map);
+        txtMarkerTotal = findViewById(R.id.txt_maker_total_map);
         //chattingRoomViewModel = new ChattingRoomViewModel();
     }
 
@@ -371,12 +411,40 @@ public class MapsActivity
         setUserMarker(false, latLng, user.getEmail(), null);
     }
 
+    /*
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                Intent i = new Intent(this,  ChattingActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                overridePendingTransition(R.anim.sliding_up, R.anim.stay);
+                finish();
+                return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+    */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
             case R.id.fab_logout:
-                //TODO:chatting 보이기
+                Intent intent = new Intent(this, ChattingActivity.class);
+                intent.putExtra("chattingTitle",title);
+                startActivity(intent);
+                overridePendingTransition(R.anim.sliding_up, R.anim.stay);
+                finish();
                 break;
             /*
             case R.id.fab_logout:
@@ -611,6 +679,53 @@ public class MapsActivity
         }
     }
 
+    private void setUserPos(){
+        for (String email:emails) {
+            for(UserPos userPos: UserPos.getInstance()) {
+                if (email.trim().equals(userPos.getEmail())){
+                    Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
+                    break;
+                }
+            }
+        }
+    }
+
+    private void countMarker(){
+        markerCount = emails.size();
+        Person.getInstance().clear();
+        for(int i=0;i<Person.getInstance().size();i++){
+            if(Person.getInstance().get(i).getAddressPosition().getX() == -1){
+                markerCount--;
+            }
+        }
+        txtMarkerTotal.setText(markerCount+"");
+
+        TextView txt1 = findViewById(R.id.txt_search_mid_1);
+        TextView txt2 = findViewById(R.id.txt_search_mid_2);
+        TextView txt3 = findViewById(R.id.txt_search_mid_3);
+
+        if(markerCount==emails.size()){
+            linearBtnSearchMid.setBackgroundResource(R.color.appMainColor);
+            txt1.setTextColor(getResources().getColor(R.color.colorWhite));
+            txt2.setTextColor(getResources().getColor(R.color.colorWhite));
+            txt3.setTextColor(getResources().getColor(R.color.colorWhite));
+            txtMarkerTotal.setTextColor(getResources().getColor(R.color.colorWhite));
+            txtPeopleTotal.setTextColor(getResources().getColor(R.color.colorWhite));
+
+            linearBtnSearchMid.setClickable(true);
+        }
+        else{
+            linearBtnSearchMid.setBackgroundResource(R.color.grayButtonEdge);
+            txt1.setTextColor(getResources().getColor(R.color.grayButtonText));
+            txt2.setTextColor(getResources().getColor(R.color.grayButtonText));
+            txt3.setTextColor(getResources().getColor(R.color.grayButtonText));
+            txtMarkerTotal.setTextColor(getResources().getColor(R.color.grayButtonText));
+            txtPeopleTotal.setTextColor(getResources().getColor(R.color.grayButtonText));
+
+            linearBtnSearchMid.setClickable(false);
+        }
+    }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -618,9 +733,12 @@ public class MapsActivity
                 case Constant.REQUEST_LOCATION_SYNC_SUCCESS:
                     Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_SUCCESS");
                     Person.getInstance().clear();
+                    /*
                     for (UserPos userPos: UserPos.getInstance()) {
                         Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
-                    }
+                    }*/
+                    setUserPos();
+                    countMarker();
                     break;
                 case Constant.REQUEST_LOCATION_SYNC_NONE:
                     Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_NONE");

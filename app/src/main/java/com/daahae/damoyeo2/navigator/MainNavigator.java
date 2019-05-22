@@ -5,5 +5,10 @@ import android.view.View;
 public interface MainNavigator {
     void convertFragment(View view);
     void enterChattingRoom(int position);
-    void hideNavigator();
+    void showAddFriendDialog();
+    void closeFriendDialog();
+    void showAddChattingRoomDialog();
+    void closeAddChattingRoomDialog();
+    void showAddFriendConfirmDialog();
+    void showAddFriendCancelDialog();
 }

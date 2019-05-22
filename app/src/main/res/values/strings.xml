@@ -50,7 +50,7 @@
     <string name="tv_arrow_text">  \u003E  </string>
     <string name="tv_end_name_text">신분당선강남역</string>
     <string name="tv_get_off_text">하차</string>
-  
+
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

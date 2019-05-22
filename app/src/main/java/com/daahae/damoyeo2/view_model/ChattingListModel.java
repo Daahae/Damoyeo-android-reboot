@@ -19,19 +19,48 @@ public class ChattingListModel {
 
     private String name;
     private String count;
+    private ArrayList<String> emails;
+    private ArrayList<String> names;
 
     public ChattingListModel() {
+    }
+
+
+    public ChattingListModel(String name, String count, ArrayList<String> emails, ArrayList<String> names) {
+        this.name = name;
+        this.count = count;
+        this.emails = emails;
+        this.names = names;
     }
 
     public ChattingListModel(ChattingRoom chattingRoom, ArrayList<UserObject> userObjects){
         this.name = setRoomTitle(chattingRoom,userObjects);
         this.count = chattingRoom.count;
+        emails = new ArrayList<>();
+
+        if(chattingRoom.user1!=null) emails.add(chattingRoom.user1.replace(" ",""));
+        if(chattingRoom.user2!=null) emails.add(chattingRoom.user2.replace(" ",""));
+        if(chattingRoom.user3!=null) emails.add(chattingRoom.user3.replace(" ",""));
+        if(chattingRoom.user4!=null) emails.add(chattingRoom.user4.replace(" ",""));
+        if(chattingRoom.user5!=null) emails.add(chattingRoom.user5.replace(" ",""));
+        if(chattingRoom.user6!=null) emails.add(chattingRoom.user6.replace(" ",""));
+
+    }
+
+    public ArrayList<String> getEmails() {
+        return emails;
+    }
+
+    public ArrayList<String> getNames() {
+        return names;
     }
 
     private String findUser(String email, ArrayList<UserObject> userObjects){
 
+        email = email.replaceAll(" ","");
+        Log.v("email",email);
         for(int j=0;j<userObjects.size();j++){
-            if(email.equals(userObjects.get(j).email)) {
+            if(email.trim().equals(userObjects.get(j).email)) {
                 return userObjects.get(j).nickname;
             }
         }
@@ -50,6 +79,10 @@ public class ChattingListModel {
 
         title = title.substring(0, title.length()-2);
 
+        if(title.length()>20) {
+            title = title.substring(0, 20);
+            title += "...";
+        }
         return title;
     }
 

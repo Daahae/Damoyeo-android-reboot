@@ -1,5 +1,6 @@
 package com.daahae.damoyeo2.communication;
 
+import com.daahae.damoyeo2.model.Friend;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
@@ -42,11 +43,30 @@ public interface RetrofitService {
     @POST("category")
     Call<JsonObject> getCategoryInformation(@Field("categoryInfoArr") String categoryInfo);
 
+
+    /**
+    * Friend List Function
+    */
     //@Multipart
     @FormUrlEncoded
-    @POST("friend")
+    @POST("friendRequest")
     Call<JsonObject> getFriendsList(@Field("friend") String user);
 
+
+    //@Multipart
+    @FormUrlEncoded
+    @POST("friendAdd")
+    Call<JsonObject> getAddFriend(@Field("friend") String user);
+
+    //@Multipart
+    @FormUrlEncoded
+    @POST("friendAccept")
+    Call<JsonObject> getAcceptFriend(@Field("friend") String user);
+
+
+    /**
+     * Chatting List Function
+     */
 
     //@Multipart
     @FormUrlEncoded
@@ -56,5 +76,5 @@ public interface RetrofitService {
     //@Multipart
     @FormUrlEncoded
     @POST("detailChatRoom")
-    Call<JsonObject> getChattingRoomInformation(@Field("detailChatRoom") String request);
+    Call<JsonObject> getChattingRoomInformation(@Field("chatRoom") String request);
 }

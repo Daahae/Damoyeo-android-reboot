@@ -9,20 +9,26 @@ import com.google.gson.annotations.SerializedName;
 public class Friend {
 
     @SerializedName("email")
-    private String email;
+    public String email;
 
     @SerializedName("nickname")
     public String name;
 
-    @SerializedName("relation")
-    public int relation;
+    private boolean isFriend;
 
     public Drawable profilePicture;
 
-    public Friend(String email, String name, int relation) {
+    public boolean isFriend() {
+        return isFriend;
+    }
+
+    public void setFriend(boolean friend) {
+        isFriend = friend;
+    }
+
+    public Friend(String email, String name) {
         this.email = email;
         this.name = name;
-        this.relation = relation;
         this.profilePicture = Constant.context.getResources().getDrawable(R.drawable.ic_friend_profile);
     }
 

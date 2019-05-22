@@ -9,34 +9,26 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/basic_height"
         android:background="@color/colorWhite"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:background="@color/appMainColor"
-            android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btn_back_category"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@color/colorWhite"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_back" />
 
-            <ImageButton
-                android:id="@+id/btn_back_category"
-                android:layout_width="55dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:background="@color/appMainColor"
-                android:scaleType="centerInside"
-                android:src="@drawable/btn_back_white" />
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="133dp"
-                android:gravity="center"
-                android:src="@drawable/ic_main" />
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/txt_chatting_room_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=""
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -64,14 +56,17 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
+            android:background="#55ffffff"
             android:orientation="vertical">
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_all_marker_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:background="@color/colorWhite"
-
+                android:scaleType="fitCenter"
+                android:padding="3dp"
+                android:src="@drawable/ic_public_transport"
                 android:text="전체보기" />
 
             <ListView

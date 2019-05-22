@@ -13,6 +13,7 @@
         android:id="@+id/relative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
         android:padding="10dp"
         android:orientation="horizontal">
 
@@ -34,29 +35,11 @@
             android:layout_weight="1"
             android:textSize="16sp" />
 
-        <LinearLayout
-            android:id="@+id/linearAddFriend"
+        <ImageView
+            android:id="@+id/img_radio"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_cancel_addFriend"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:minWidth="0dp"
-                android:background="@color/grayButtonEdge"
-                android:textColor="@color/grayButtonText"
-                android:text="거절" />
-
-            <Button
-                android:id="@+id/btn_consent_addFriend"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:minWidth="0dp"
-                android:background="@color/colorGreen"
-                android:textColor="@color/colorWhite"
-                android:text="수락" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@{model.addChattingRoomCheck}"/>
     </LinearLayout>
 </layout>

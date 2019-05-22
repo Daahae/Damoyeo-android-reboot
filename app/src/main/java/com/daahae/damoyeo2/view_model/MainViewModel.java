@@ -1,10 +1,13 @@
 package com.daahae.damoyeo2.view_model;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
 import android.databinding.ObservableField;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -16,9 +19,12 @@ import android.widget.EditText;
 import com.android.databinding.library.baseAdapters.BR;
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
+import com.daahae.damoyeo2.communication.SocketCommunication;
 import com.daahae.damoyeo2.databinding.FragmentChattingBinding;
 import com.daahae.damoyeo2.model.ChattingRequest;
 import com.daahae.damoyeo2.model.ChattingRoomArr;
+import com.daahae.damoyeo2.model.FriendAddRequestForm;
+import com.daahae.damoyeo2.model.FriendAcceptMessage;
 import com.daahae.damoyeo2.navigator.MainNavigator;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.activity.MainActivity;
@@ -33,6 +39,7 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
     public final ObservableField<Drawable> btnPerson = new ObservableField<>();
     public final ObservableField<Drawable> btnChatting = new ObservableField<>();
     public final ObservableField<Drawable> btnSetting = new ObservableField<>();
+    public final ObservableField<Drawable> addChattingRoomCheck = new ObservableField<>();
     public final ObservableField<String> txtTitle = new ObservableField<>();
 
     public final ObservableField<String> txtName = new ObservableField<>();
@@ -46,7 +53,7 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
 
     private static boolean addButtonVisible=true;
 
-    public final ObservableField<EditText> editFriend = new ObservableField<>();
+    Dialog dialog;
 
     public MainViewModel(MainNavigator navigator) {
         this.navigator = navigator;
@@ -61,6 +68,7 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
 
         txtName.set(Constant.nickname);
         drawableImage.set(Constant.context.getDrawable(R.drawable.ic_my_profile));
+
     }
 
     @Override
@@ -101,6 +109,16 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
         notifyPropertyChanged(BR.addButtonVisible);
     }
 
+    @Bindable
+    public void setAddChattingRoom(boolean isCheck){
+        if(isCheck){
+            addChattingRoomCheck.set(ContextCompat.getDrawable(Constant.context,R.drawable.ic_empty_radio));
+        } else{
+            addChattingRoomCheck.set(ContextCompat.getDrawable(Constant.context,R.drawable.ic_check_radio));
+        }
+
+    }
+
     public void setChattingList(FragmentChattingBinding binding, ChattingRoomArr chattingRoomArr){
         chattingListModel = new ChattingListModel();
         chattingListModelArrayList = chattingListModel.getArrayListChattingList(chattingRoomArr);
@@ -119,10 +137,16 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
     private void chattingItemClick(int position){
         Log.v("item","click");
         ChattingRequest chattingRequest = new ChattingRequest();
-        chattingRequest.setRoomNumber(1);
+        chattingRequest.setRoomNumber(position+1);
         RetrofitCommunication.getInstance().setDetailChattingRoomNumber(chattingRequest);
 
         Intent intent = new Intent(MainActivity.getMainContext(), MapsActivity.class);
+
+        intent.putExtra("roomTitle",chattingListModelArrayList.get(position).getName());
+        intent.putExtra("roomEmails",chattingListModelArrayList.get(position).getEmails());
+
+        Log.v("roomEmails(Main)",chattingListModelArrayList.get(position).getEmails().toString());
+
         MainActivity.getMainContext().startActivity(intent);
         if(navigator!=null) navigator.enterChattingRoom(position);
     }
@@ -132,16 +156,41 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
         public void onClick(View v) {
             switch (Constant.FRAGMENT){
                 case Constant.FRIEND_FRAGMENT:
-                    //TODO: friend추가 dialog
+                    navigator.showAddFriendDialog();
                     break;
                 case Constant.CHATTINGROOM_FRAGMENT:
-                    //TODO: chatting추가 dialog
+                    navigator.showAddChattingRoomDialog();
                     break;
                 case Constant.SETTING_FRAGMENT:
                     break;
             }
         }
     };
+
+    public void sendFriendAddRequest(String destEmail){
+
+        FriendAddRequestForm requestForm = new FriendAddRequestForm();
+        requestForm.setMyEmail(Constant.email);
+        requestForm.setDestEmail(destEmail);
+        Log.v("destEmail",destEmail);
+        RetrofitCommunication.getInstance().setAddFriend(requestForm);
+
+        RetrofitCommunication.AddFriendCallBack addFriendCallBack = new RetrofitCommunication.AddFriendCallBack() {
+            @Override
+            public void addFriendDataPath(FriendAcceptMessage stringMessage) {
+                Log.v("stringMessage",stringMessage.message+"");
+                if (stringMessage.message == 1) {
+                    navigator.showAddFriendConfirmDialog();
+                } else {
+                    navigator.showAddFriendCancelDialog();
+                }
+
+            }
+        };
+        RetrofitCommunication.getInstance().setAddFriendCallBack(addFriendCallBack);
+
+        navigator.closeFriendDialog();
+    }
 
     public View.OnClickListener replaceFragmentListener = new View.OnClickListener() {
         @Override
@@ -192,10 +241,27 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
         }
     };
 
+    public void sendSocketAddUser(){
+        //SocketCommunication.getInstance().sendAddUser();
+    }
+
     @BindingAdapter("onFocusChange")
     public static void onFocusChange(EditText text, final OnFocusChangeListener listener) {
         text.setOnFocusChangeListener(listener);
     }
 
+    public View.OnClickListener closeAddChattingRoomDialog = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            navigator.closeAddChattingRoomDialog();
+        }
+    };
+
+    public View.OnClickListener addChattingRoomDialog = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
 
 }
