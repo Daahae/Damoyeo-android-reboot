@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="안종희, 강인혁, 이재영"
+            android:text=""
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -156,6 +156,7 @@
         android:clickable="true">
 
         <TextView
+            android:id="@+id/txt_search_mid_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/grayButtonText"
@@ -171,6 +172,7 @@
             android:text="0"/>
 
         <TextView
+            android:id="@+id/txt_search_mid_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/grayButtonText"
@@ -187,10 +189,12 @@
             android:text="3"/>
 
         <TextView
+            android:id="@+id/txt_search_mid_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/grayButtonText"
             android:textSize="20sp"
             android:text=")"/>
     </LinearLayout>
+
 </LinearLayout>

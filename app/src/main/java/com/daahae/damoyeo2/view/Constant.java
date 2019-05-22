@@ -116,4 +116,6 @@ public class Constant {
     public static final int CHATTINGROOM_FRAGMENT = 4001;
     public static final int SETTING_FRAGMENT = 4002;
     public static int FRAGMENT=4000;
+
+    public static int MAX_FRIEND=0;
 }

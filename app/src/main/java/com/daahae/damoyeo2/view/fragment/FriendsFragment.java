@@ -1,11 +1,13 @@
 package com.daahae.damoyeo2.view.fragment;
 
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ public class FriendsFragment extends Fragment {
     private ArrayList<FriendsModel> friendsModelArrayList;
     private FriendsAdapter friendsAdapter;
 
+    private Context context;
+
     public FriendsFragment(){
 
     }
@@ -39,6 +43,8 @@ public class FriendsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        context = this.getContext();
 
         return DataBindingUtil.inflate(inflater, R.layout.fragment_friends, container, false).getRoot();
     }
@@ -62,13 +68,16 @@ public class FriendsFragment extends Fragment {
                 FragmentFriendsBinding binding = DataBindingUtil.getBinding(getView());
                 friendsModelArrayList = friendsModel.getArrayListFriends(friendArr);
 
-                friendsAdapter = new FriendsAdapter(getContext(),friendsModelArrayList);
+                friendsAdapter = new FriendsAdapter(context,friendsModelArrayList);
                 binding.listView.setAdapter(friendsAdapter);
             }
         };
         RetrofitCommunication.getInstance().setFriendsListCallBack(friendsListCallBack);
     }
 
+    public void requestFriendList(){
+        binding.listView.setAdapter(friendsAdapter);
+    }
 
 
 }

@@ -24,7 +24,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.activity.ScheduleActivity"></activity>
+        <activity android:name=".view.activity.ChattingActivity"></activity>
+        <activity android:name=".view.activity.ScheduleActivity" />
         <activity
             android:name=".view.activity.MainActivity"
             android:label="@string/title_activity_main2" /> <!-- Bitmap too large to be uploaded into a texture -->
@@ -45,14 +46,17 @@
             android:configChanges="keyboardHidden|orientation" />
         <activity
             android:name=".view.activity.MapsActivity"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation" >
+        </activity>
         <activity
             android:name=".view.activity.CategoryActivity"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation" >
+        </activity>
         <activity
             android:name=".view.activity.DetailActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".view.activity.StartActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

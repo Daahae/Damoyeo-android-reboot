@@ -18,13 +18,9 @@ public class InterestActivity extends AppCompatActivity implements UserNavigator
 
     private ActivityInterestBinding binding;
 
-    private BackPressCloseHandler backPressCloseHandler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        backPressCloseHandler = new BackPressCloseHandler(this);
 
         initViewModel();
 
@@ -57,10 +53,5 @@ public class InterestActivity extends AppCompatActivity implements UserNavigator
     @Override
     public void toastCategoryEmptyMessage() {
         Toast.makeText(this, "관심사를 각각 3개씩 선택해주세요", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        backPressCloseHandler.onBackPressed();
     }
 }

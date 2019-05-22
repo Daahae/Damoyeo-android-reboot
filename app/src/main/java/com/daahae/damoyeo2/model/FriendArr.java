@@ -7,8 +7,11 @@ import java.util.List;
 
 public class FriendArr {
 
-    @SerializedName("userArr")
+    @SerializedName("friendArr")
     private ArrayList<Friend> friends;
+
+    @SerializedName("waitingFriendArr")
+    private ArrayList<Friend> friendRequesters;
 
     public ArrayList<Friend> getFriends() {
         return friends;
@@ -16,5 +19,13 @@ public class FriendArr {
 
     public void setFriends(ArrayList<Friend> friends) {
         this.friends = friends;
+    }
+
+    public ArrayList<Friend> getFriendRequesters() {
+        return friendRequesters;
+    }
+
+    public void setFriendRequesters(ArrayList<Friend> friendRequesters) {
+        this.friendRequesters = friendRequesters;
     }
 }

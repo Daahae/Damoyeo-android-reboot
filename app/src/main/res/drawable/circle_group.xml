@@ -8,7 +8,7 @@
         android:left="4dp">
         <shape
             android:shape="oval">
-            <solid android:color="@color/appMainColor"/>
+            <solid android:color="#789AFF"/>
         </shape>
     </item>
 </selector>

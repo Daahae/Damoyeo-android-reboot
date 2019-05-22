@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/relative_other_chatting_item"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:id="@+id/txt_other_name_chatting_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="14dp"
+            android:lineSpacingExtra="9sp"
+            android:text="사용자"
+            android:textColor="#535353"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txt_other_contexts_chatting_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/txt_other_name_chatting_item"
+            android:layout_below="@+id/txt_other_name_chatting_item"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/chatting_box_me"
+            android:padding="10dp"
+            android:text="메세지" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_me_chatting_item"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txt_me_contexts_chatting_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="right"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/chatting_box_other"
+            android:padding="10dp" />
+
+
+    </RelativeLayout>
+</LinearLayout>
