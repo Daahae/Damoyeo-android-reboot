@@ -244,8 +244,8 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Log.v("socket","addUser");
-                SocketCommunication.getInstance().sendAddUser(addChattingRoom(),mainViewModel.getRoomSize()+1);
+                Log.v("socket","addUser "+Constant.ROOM_COUNT+1);
+                SocketCommunication.getInstance().sendAddUser(addChattingRoom(),Constant.ROOM_COUNT +1);
             }
         });
     }

@@ -130,7 +130,7 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
         chattingListAdapter = new ChattingListAdapter(MainActivity.getMainContext(),chattingListModelArrayList);
         binding.listView.setAdapter(chattingListAdapter);
 
-        roomSize = chattingRoomArr.getChattingRooms().size();
+        Constant.ROOM_COUNT = chattingRoomArr.getChattingRooms().size();
 
         binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
