@@ -42,6 +42,7 @@ public class Constant {
     public static final int SELECT_MID_PAGE = 102;
     public static final int CATEGORY_PAGE = 103;
     public static final int DETAIL_PAGE = 104;
+    public static final int RESULT_PAGE = 105;
 
     // Category
     public static final int PLAY = 200;

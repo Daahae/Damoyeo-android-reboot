@@ -132,7 +132,7 @@ public class CategoryActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
-        presenter = new CategoryPresenter(this);
+        // presenter = new CategoryPresenter(this);
         markerTimeAdapter = new MarkerTimeAdapter();
         buildingAdapter = new BuildingAdapter();
 
@@ -493,7 +493,6 @@ public class CategoryActivity
         } else {
             Intent intent = new Intent(CategoryActivity.this, DetailActivity.class);
             startActivity(intent);
-            presenter.getBuildingDetailFromServer(position);
         }
     }
 

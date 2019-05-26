@@ -7,20 +7,20 @@ import android.widget.Toast;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
-import com.daahae.damoyeo2.model.BuildingArr;
 import com.daahae.damoyeo2.model.TransPathList;
 import com.daahae.damoyeo2.view.Constant;
-import com.daahae.damoyeo2.view.activity.CategoryActivity;
+import com.daahae.damoyeo2.view.activity.NavigationDrawerActivity;
+import com.daahae.damoyeo2.view.fragment.ResultFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class CategoryPresenter {
 
-    private CategoryActivity view;
+    private ResultFragment view;
     private CheckTypesTask loading;
 
-    public CategoryPresenter(CategoryActivity view) {
+    public CategoryPresenter(ResultFragment view) {
         this.view = view;
         loading = new CheckTypesTask();
         loading.execute();
@@ -29,10 +29,6 @@ public class CategoryPresenter {
     public void setSelectCategory(int category) {
         Log.d("start2", new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(System.currentTimeMillis()));
         RetrofitCommunication.getInstance().setBuildingsData(category);
-    }
-
-    public void getBuildingDetailFromServer(int index) {
-        RetrofitCommunication.getInstance().clickItem(view.getBuildingAdapter().getItem(index));
     }
 
     public void setMidInfoTransport(){
@@ -64,21 +60,13 @@ public class CategoryPresenter {
             @Override
             public void disconnectServer() {
                 loading.onPostExecute(null);
-                view.finish(); // 뒤로가기
+                //view.getActivity().finish(); // 뒤로가기
+                if (view != null)
+                    ((NavigationDrawerActivity) view.getActivity()).backView(view);
                 Toast.makeText(Constant.context,"중간지점 탐색에 실패했습니다", Toast.LENGTH_SHORT).show();
             }
         };
         RetrofitCommunication.getInstance().setUserData(userCallBack);
-
-        RetrofitCommunication.BuildingCallBack buildingCallBack = new RetrofitCommunication.BuildingCallBack() {
-            @Override
-            public void buildingDataPath(BuildingArr buildingArr) {
-                view.initBuildingInfo(buildingArr);
-                view.convertList(view.setBuildingInfo(view.getBuildingAdapter()));
-                view.getListCategory().setAdapter(view.getBuildingAdapter());
-            }
-        };
-        RetrofitCommunication.getInstance().setBuildingData(buildingCallBack);
     }
 
 
@@ -108,7 +96,12 @@ public class CategoryPresenter {
                 }
 
             } catch (InterruptedException e) {
-                view.finish();
+                //view.getActivity().finish();
+                if (view != null) {
+                    ((NavigationDrawerActivity) view.getActivity()).backView(view);
+                    if (asyncDialog.isShowing())
+                        asyncDialog.dismiss();
+                }
                 e.printStackTrace();
             }
             return null;
@@ -116,7 +109,8 @@ public class CategoryPresenter {
 
         @Override
         protected void onPostExecute(Void result) {
-            asyncDialog.dismiss();
+            if (asyncDialog.isShowing())
+                asyncDialog.dismiss();
             super.onPostExecute(result);
         }
     }

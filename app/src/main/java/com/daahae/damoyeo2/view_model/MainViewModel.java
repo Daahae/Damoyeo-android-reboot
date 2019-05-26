@@ -29,6 +29,7 @@ import com.daahae.damoyeo2.navigator.MainNavigator;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.activity.MainActivity;
 import com.daahae.damoyeo2.view.activity.MapsActivity;
+import com.daahae.damoyeo2.view.activity.NavigationDrawerActivity;
 import com.daahae.damoyeo2.view.adapter.ChattingListAdapter;
 
 import java.util.ArrayList;
@@ -148,10 +149,10 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
 
         RetrofitCommunication.getInstance().setDetailChattingRoomNumber(chattingRequest);
 
-        Intent intent = new Intent(MainActivity.getMainContext(), MapsActivity.class);
+        Intent intent = new Intent(MainActivity.getMainContext(), NavigationDrawerActivity.class);
 
-        intent.putExtra("roomTitle",chattingListModelArrayList.get(position).getName());
-        intent.putExtra("roomEmails",chattingListModelArrayList.get(position).getEmails());
+        intent.putExtra("roomTitle", chattingListModelArrayList.get(position).getName());
+        intent.putExtra("roomEmails", chattingListModelArrayList.get(position).getEmails());
         Constant.CURRENT_ROOM_NUMBER = position+1;
         Log.v("roomEmails(Main)",chattingListModelArrayList.get(position).getEmails().toString());
 
