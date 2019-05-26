@@ -74,6 +74,8 @@ public class MapsActivity
         implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
                     GoogleMap.OnMapClickListener {
 
+    private static final String TAG = "MAIN_ACTIVITY";
+
     private MapsPresenter presenter;
 
     private GoogleMap googleMap = null;
@@ -104,7 +106,6 @@ public class MapsActivity
     private TextView txtMarkerTotal;
     private TextView txtPeopleTotal;
 
-    private int markerCount=0;
     //private ChattingRoomViewModel chattingRoomViewModel;
     //private ActivityMapsBinding binding;
 
@@ -155,7 +156,7 @@ public class MapsActivity
         RetrofitCommunication.DetailChattingRoomCallBack detailChattingRoomCallBack = new RetrofitCommunication.DetailChattingRoomCallBack() {
             @Override
             public void detailChattingRoomDataPath(UserArr userArr) {
-                txtPeopleTotal.setText(userArr.getCount()+"");
+                //txtPeopleTotal.setText(userArr.getCount()+"");
                 for(int i=0;i<userArr.getUserArrayList().get(0).size();i++) {
                     //emails.add(userArr.getUserArrayList().get(0).get(i).email);
                     //names.add(userArr.getUserArrayList().get(0).get(i).nickname);
@@ -174,15 +175,15 @@ public class MapsActivity
         fabtn.setFabGPS((FloatingActionButton) findViewById(R.id.fab_gps));
         fabtn.setFabUser((FloatingActionButton) findViewById(R.id.fab_user));
         fabtn.setFabFull((FloatingActionButton) findViewById(R.id.fab_full));
-        fabtn.setFabLogout((FloatingActionButton) findViewById(R.id.fab_logout));
+        fabtn.setFabChat((FloatingActionButton) findViewById(R.id.fab_chat));
 
         linearBtnSearchMid = findViewById(R.id.linear_search_mid);
 
         btnBack = findViewById(R.id.btn_back_maps);
         txtTitle = findViewById(R.id.txt_chatting_room_name);
 
-        txtPeopleTotal = findViewById(R.id.txt_people_total_map);
         txtMarkerTotal = findViewById(R.id.txt_maker_total_map);
+        txtPeopleTotal = findViewById(R.id.txt_people_total_map);
         //chattingRoomViewModel = new ChattingRoomViewModel();
     }
 
@@ -208,7 +209,7 @@ public class MapsActivity
         fabtn.getFabGPS().setOnClickListener(this);
         fabtn.getFabUser().setOnClickListener(this);
         fabtn.getFabFull().setOnClickListener(this);
-        fabtn.getFabLogout().setOnClickListener(this);
+        fabtn.getFabChat().setOnClickListener(this);
 
         linearBtnSearchMid.setOnClickListener(this);
 
@@ -439,7 +440,7 @@ public class MapsActivity
     public void onClick(View v) {
         switch (v.getId()) {
 
-            case R.id.fab_logout:
+            case R.id.fab_chat:
                 Intent intent = new Intent(this, ChattingActivity.class);
                 intent.putExtra("roomTitle",title);
                 startActivity(intent);
@@ -677,34 +678,17 @@ public class MapsActivity
         }
     }
 
-    private void setUserPos(){
-        for (String email:emails) {
-            for(UserPos userPos: UserPos.getInstance()) {
-                Log.v("email",email);
-                Log.v("userPds",userPos.getEmail());
-                if (email.trim().equals(userPos.getEmail())){
-                    Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
-                    break;
-                }
-            }
-        }
-    }
-
     private void countMarker(){
-        markerCount = emails.size();
-        Person.getInstance().clear();
-        for(int i=0;i<Person.getInstance().size();i++){
-            if(Person.getInstance().get(i).getAddressPosition().getX() == -1){
-                markerCount--;
-            }
-        }
-        txtMarkerTotal.setText(markerCount+"");
+        int markerCount = Person.getInstance().size();
+        int personCount = emails.size();
+        txtMarkerTotal.setText(markerCount + "");
+        txtPeopleTotal.setText(personCount + "");
 
         TextView txt1 = findViewById(R.id.txt_search_mid_1);
         TextView txt2 = findViewById(R.id.txt_search_mid_2);
         TextView txt3 = findViewById(R.id.txt_search_mid_3);
 
-        if(markerCount==emails.size()){
+        if(markerCount==personCount) {
             linearBtnSearchMid.setBackgroundResource(R.color.appMainColor);
             txt1.setTextColor(getResources().getColor(R.color.colorWhite));
             txt2.setTextColor(getResources().getColor(R.color.colorWhite));
@@ -737,28 +721,11 @@ public class MapsActivity
                     for (String email:emails) {
                         for(UserPos userPos: UserPos.getInstance()) {
                             if (email.trim().equals(userPos.getEmail())){
-                                Log.v("email",email);
-                                Log.v("userPds",userPos.getEmail());
                                 Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
-                                MarkerOptions makerOptions = new MarkerOptions();
-                                makerOptions
-                                        .position(new LatLng(userPos.getStartLat(), userPos.getStartLng()))
-                                        .title(userPos.getEmail());
-
-                                Marker marker = googleMap.addMarker(makerOptions);
-                                marker.showInfoWindow();
-                                markerList.add(marker);
-
                                 break;
                             }
                         }
                     }
-
-                    /*
-                    for (UserPos userPos: UserPos.getInstance()) {
-                        Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
-                    }*/
-                    //setUserPos();
                     countMarker();
                     break;
                 case Constant.REQUEST_LOCATION_SYNC_NONE:

@@ -7,7 +7,7 @@ public class FloatingActionBtn {
     private Animation fabOpen, fabClose;
     private boolean isFabOpen = false;
     private FloatingActionButton fabMenu, fabGPS, fabUser, fabFull;
-    private FloatingActionButton fabLogout;
+    private FloatingActionButton fabLogout, fabChat;
 
     public FloatingActionButton getFabMenu() {
         return fabMenu;
@@ -55,6 +55,14 @@ public class FloatingActionBtn {
 
     public void setFabLogout(FloatingActionButton fabLogout) {
         this.fabLogout = fabLogout;
+    }
+
+    public FloatingActionButton getFabChat() {
+        return fabChat;
+    }
+
+    public void setFabChat(FloatingActionButton fabChat) {
+        this.fabChat = fabChat;
     }
 
     public void anim() {

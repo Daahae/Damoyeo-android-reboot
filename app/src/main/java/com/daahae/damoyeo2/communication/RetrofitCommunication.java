@@ -183,8 +183,10 @@ public class RetrofitCommunication {
                         if (userPosList != null) {
                             UserPos.getInstance().clear();
                             for (UserPos user: userPosList.getUserPosList()) {
-                                UserPos.getInstance().add(user);
-                                Log.d(TAG, "userPos list" + user.toString());
+                                if (user.getStartLat() != -1) {
+                                    UserPos.getInstance().add(user);
+                                    Log.d(TAG, "userPos list" + user.toString());
+                                }
                             }
                             if (userPosList.getUserPosList().size() > 0)
                                 handler.sendEmptyMessage(Constant.REQUEST_LOCATION_SYNC_SUCCESS);
