@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 public class ChattingList {
     public String name;
     public Drawable profilePicture;
+    public String time;
 
     public ChattingList() {
     }

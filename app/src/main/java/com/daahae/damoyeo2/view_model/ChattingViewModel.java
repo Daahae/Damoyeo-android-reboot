@@ -5,8 +5,7 @@ import com.daahae.damoyeo2.communication.SocketCommunication;
 public class ChattingViewModel {
 
     public void sendChatting(String str){
-
-        //SocketCommunication.getInstance().sendChatting(str);
+        SocketCommunication.getInstance().sendChatting(str);
     }
     public void getChatting(){
 

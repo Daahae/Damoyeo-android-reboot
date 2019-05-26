@@ -1,9 +1,11 @@
 package com.daahae.damoyeo2.view.activity;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,9 +14,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daahae.damoyeo2.R;
+import com.daahae.damoyeo2.communication.SocketCommunication;
 import com.daahae.damoyeo2.model.Messages;
+import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.adapter.MessageAdapter;
 import com.daahae.damoyeo2.view_model.ChattingViewModel;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -31,27 +39,83 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
     String title;
 
     ChattingViewModel chattingViewModel;
+    private JSONObject msg;
+    private JSONArray json;
 
+    /*
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("roomTitle",title);
+        startActivity(intent);
+    }
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
-        initView();
-
         Intent intent = getIntent();
-        title = intent.getStringExtra("chattingTitle");
+        title = intent.getStringExtra("roomTitle");
+
+        initView();
 
         listMessage.setAdapter(adapter);
         adapter.clearAll();
 
-        addMessage("people","hi",Messages.MESSAGE_OTHER);
-        addMessage("people","hello",Messages.MESSAGE_ME);
-        addMessage("people","안녕",Messages.MESSAGE_OTHER);
-
         adapter.notifyDataSetChanged();
         listMessage.setAdapter(adapter);
+
+        SocketCommunication.getInstance().sendSwitchRoom(Constant.CURRENT_ROOM_NUMBER);
+
+        SocketCommunication.ChattingCallBack chattingCallBack = new SocketCommunication.ChattingCallBack() {
+            @Override
+            public void broadcastingMessage(String name, String message) {
+                Log.v("json","msg");
+                if(name.equals("msg")){
+
+                    adapter.clearAll();
+
+                    try {
+                        json = new JSONArray(message);
+
+                        for(int i=0;i<json.length();i++){
+                            msg = json.getJSONObject(i);
+
+                            if(msg.getString("userNickName").trim().equals(Constant.nickname)) {
+                                addMessage(msg.getString("userNickName"), msg.getString("msg"), Messages.MESSAGE_ME);
+                                Log.v("json nickname", msg.getString("userNickName"));
+                                Log.v("json msg", msg.getString("msg"));
+                            } else {
+                                addMessage(msg.getString("userNickName"), msg.getString("msg"), Messages.MESSAGE_OTHER);
+
+                            }
+                        }
+
+
+                        Message msg = handler.obtainMessage();
+                        handler.sendMessage(msg);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        };
+        SocketCommunication.getInstance().setChattingCallBack(chattingCallBack);
     }
+
+
+
+    Handler handler = new Handler(){
+        public void handleMessage(Message msg){
+            // 원래 하려던 동작 (UI변경 작업 등)
+
+            adapter.notifyDataSetChanged();
+            listMessage.setAdapter(adapter);
+        }
+    };
 
     private void addMessage(String name, String contents, int type){
         adapter.addItem(name,contents,type);
@@ -63,6 +127,7 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
 
         txtTitle = findViewById(R.id.txt_title_chatting);
         txtTitle.setText(title);
+
         btnClose = findViewById(R.id.btn_close_chatting);
         btnClose.setOnClickListener(this);
 
@@ -78,12 +143,19 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_close_chatting:
+                onBackPressed();
+                /*
                 Intent intent = new Intent(this, MapsActivity.class);
                 intent.putExtra("roomTitle",title);
+                startActivity(intent);
+                */
                 break;
             case R.id.btn_send_chatting:
                 if(!editText.getText().toString().equals("")){
                     chattingViewModel.sendChatting(editText.getText().toString());
+                    addMessage(Constant.nickname,editText.getText().toString(),Messages.MESSAGE_ME);
+                    editText.setText("");
+                    listMessage.setSelection(adapter.getCount()-1);
                 }
                 break;
         }

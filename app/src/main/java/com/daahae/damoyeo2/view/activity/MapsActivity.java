@@ -115,7 +115,7 @@ public class MapsActivity
 
         Intent intent = getIntent();
         title = intent.getStringExtra("roomTitle");
-        //emails = intent.getStringArrayListExtra("roomEmails");
+        emails = intent.getStringArrayListExtra("roomEmails");
 
         Log.v("roomEmails(Maps)",emails.toString());
 
@@ -157,8 +157,8 @@ public class MapsActivity
             public void detailChattingRoomDataPath(UserArr userArr) {
                 txtPeopleTotal.setText(userArr.getCount()+"");
                 for(int i=0;i<userArr.getUserArrayList().get(0).size();i++) {
-                    emails.add(userArr.getUserArrayList().get(0).get(i).email);
-                    names.add(userArr.getUserArrayList().get(0).get(i).nickname);
+                    //emails.add(userArr.getUserArrayList().get(0).get(i).email);
+                    //names.add(userArr.getUserArrayList().get(0).get(i).nickname);
                 }
             }
         };
@@ -441,10 +441,8 @@ public class MapsActivity
 
             case R.id.fab_logout:
                 Intent intent = new Intent(this, ChattingActivity.class);
-                intent.putExtra("chattingTitle",title);
+                intent.putExtra("roomTitle",title);
                 startActivity(intent);
-                overridePendingTransition(R.anim.sliding_up, R.anim.stay);
-                finish();
                 break;
             /*
             case R.id.fab_logout:
@@ -682,6 +680,8 @@ public class MapsActivity
     private void setUserPos(){
         for (String email:emails) {
             for(UserPos userPos: UserPos.getInstance()) {
+                Log.v("email",email);
+                Log.v("userPds",userPos.getEmail());
                 if (email.trim().equals(userPos.getEmail())){
                     Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
                     break;
@@ -733,11 +733,32 @@ public class MapsActivity
                 case Constant.REQUEST_LOCATION_SYNC_SUCCESS:
                     Log.d("MAPS_ACTIVITY", "REQUEST_LOCATION_SYNC_SUCCESS");
                     Person.getInstance().clear();
+
+                    for (String email:emails) {
+                        for(UserPos userPos: UserPos.getInstance()) {
+                            if (email.trim().equals(userPos.getEmail())){
+                                Log.v("email",email);
+                                Log.v("userPds",userPos.getEmail());
+                                Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
+                                MarkerOptions makerOptions = new MarkerOptions();
+                                makerOptions
+                                        .position(new LatLng(userPos.getStartLat(), userPos.getStartLng()))
+                                        .title(userPos.getEmail());
+
+                                Marker marker = googleMap.addMarker(makerOptions);
+                                marker.showInfoWindow();
+                                markerList.add(marker);
+
+                                break;
+                            }
+                        }
+                    }
+
                     /*
                     for (UserPos userPos: UserPos.getInstance()) {
                         Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
                     }*/
-                    setUserPos();
+                    //setUserPos();
                     countMarker();
                     break;
                 case Constant.REQUEST_LOCATION_SYNC_NONE:
@@ -749,4 +770,9 @@ public class MapsActivity
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

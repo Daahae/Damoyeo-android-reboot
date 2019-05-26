@@ -35,7 +35,7 @@ public class SocketCommunication {
     }
 
     public SocketCommunication(){
-
+        connectSocket();
     }
 
     public interface ChattingCallBack{
@@ -73,10 +73,12 @@ public class SocketCommunication {
         }
         message += "\",\"room\":"+room+"}";
 
+        Log.v("addUser", message);
         mSocket.emit("addUser", message);
     }
 
     public void sendChatting(String chat){
+        Log.v("sendChat", chat);
         mSocket.emit("sendChat", chat);
     }
 
@@ -87,6 +89,8 @@ public class SocketCommunication {
         @Override
         public void call(Object... args) {
             mSocket.emit("clientMessage", Constant.email);
+
+            Log.v("clientMessage", Constant.email);
         }
     };
 

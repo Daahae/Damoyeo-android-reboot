@@ -53,6 +53,8 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
 
     private static boolean addButtonVisible=true;
 
+    private int roomSize=0;
+
     Dialog dialog;
 
     public MainViewModel(MainNavigator navigator) {
@@ -116,7 +118,10 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
         } else{
             addChattingRoomCheck.set(ContextCompat.getDrawable(Constant.context,R.drawable.ic_check_radio));
         }
+    }
 
+    public int getRoomSize() {
+        return roomSize;
     }
 
     public void setChattingList(FragmentChattingBinding binding, ChattingRoomArr chattingRoomArr){
@@ -124,6 +129,8 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
         chattingListModelArrayList = chattingListModel.getArrayListChattingList(chattingRoomArr);
         chattingListAdapter = new ChattingListAdapter(MainActivity.getMainContext(),chattingListModelArrayList);
         binding.listView.setAdapter(chattingListAdapter);
+
+        roomSize = chattingRoomArr.getChattingRooms().size();
 
         binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -138,13 +145,14 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
         Log.v("item","click");
         ChattingRequest chattingRequest = new ChattingRequest();
         chattingRequest.setRoomNumber(position+1);
+
         RetrofitCommunication.getInstance().setDetailChattingRoomNumber(chattingRequest);
 
         Intent intent = new Intent(MainActivity.getMainContext(), MapsActivity.class);
 
         intent.putExtra("roomTitle",chattingListModelArrayList.get(position).getName());
         intent.putExtra("roomEmails",chattingListModelArrayList.get(position).getEmails());
-
+        Constant.CURRENT_ROOM_NUMBER = position+1;
         Log.v("roomEmails(Main)",chattingListModelArrayList.get(position).getEmails().toString());
 
         MainActivity.getMainContext().startActivity(intent);
@@ -253,6 +261,7 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
     public View.OnClickListener closeAddChattingRoomDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v("dialog","close");
             navigator.closeAddChattingRoomDialog();
         }
     };
@@ -260,7 +269,8 @@ public class MainViewModel extends BaseObservable implements BaseViewModel {
     public View.OnClickListener addChattingRoomDialog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Log.v("socket","addUser");
+            //SocketCommunication.getInstance().sendAddUser(navigator.addChattingRoom(),roomSize+1);
         }
     };
 
