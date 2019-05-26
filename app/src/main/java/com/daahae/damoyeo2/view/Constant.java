@@ -118,4 +118,7 @@ public class Constant {
     public static int FRAGMENT=4000;
 
     public static int MAX_FRIEND=0;
+
+    public static int CURRENT_ROOM_NUMBER = 0;
+    public static int ROOM_COUNT = 0;
 }

@@ -51,6 +51,7 @@ public class AddFriendsAdapter extends ArrayAdapter<FriendsModel>{
         if(friendsModelArrayList!=null) {
             itemFriendBinding.setModel(friendsModelArrayList.get(position));
         }
+
         return itemFriendBinding.getRoot();
     }
 

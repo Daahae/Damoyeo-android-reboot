@@ -31,7 +31,6 @@ public class FriendsModel extends BaseObservable {
     private String email;
     private boolean isCheck = false;
     private boolean isFriend = false;
-    public final ObservableField<Drawable> addChattingRoomCheck = new ObservableField<>();
 
     public boolean isRealFriend(){
         return isFriend;

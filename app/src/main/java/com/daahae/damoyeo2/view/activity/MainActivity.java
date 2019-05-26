@@ -7,16 +7,19 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
+import com.daahae.damoyeo2.communication.SocketCommunication;
 import com.daahae.damoyeo2.databinding.ActivityMainBinding;
 import com.daahae.damoyeo2.databinding.FragmentFriendsBinding;
 import com.daahae.damoyeo2.model.FriendArr;
@@ -193,6 +196,13 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
                 if(friendsModelArrayList.get(position).isCheck()) friendsModelArrayList.get(position).setCheck(false);
                 else friendsModelArrayList.get(position).setCheck(true);
                 mainViewModel.setAddChattingRoom(friendsModelArrayList.get(position).isCheck());
+
+                ImageView img = view.findViewById(R.id.img_radio);
+                if(friendsModelArrayList.get(position).isCheck()){
+                    img.setImageDrawable(ContextCompat.getDrawable(Constant.context,R.drawable.ic_check_radio));
+                } else{
+                    img.setImageDrawable(ContextCompat.getDrawable(Constant.context,R.drawable.ic_empty_radio));
+                }
             }
         });
 
@@ -234,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                Log.v("socket","addUser "+Constant.ROOM_COUNT+1);
+                SocketCommunication.getInstance().sendAddUser(addChattingRoom(),Constant.ROOM_COUNT +1);
             }
         });
     }
@@ -241,5 +253,16 @@ public class MainActivity extends AppCompatActivity implements MainNavigator{
     @Override
     public void closeAddChattingRoomDialog() {
         dialog.dismiss();
+    }
+
+    public ArrayList<String> addChattingRoom() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add(Constant.email);
+        for(int i=0;i<friendsModelArrayList.size();i++) {
+            if(friendsModelArrayList.get(i).isCheck()){
+                arrayList.add(friendsModelArrayList.get(i).getEmail());
+            }
+        }
+        return arrayList;
     }
 }
