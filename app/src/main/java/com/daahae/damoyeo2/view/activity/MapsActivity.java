@@ -227,7 +227,6 @@ public class MapsActivity
             public void onPlaceSelected(Place place) {
                 LatLng latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
                 setUserMarker(true, latLng, user.getEmail(), place.getName().toString());
-                presenter.saveSearchName(place.getName().toString());
             }
 
             @Override

@@ -181,7 +181,7 @@ public class MapsFragment
         SupportPlaceAutocompleteFragment autocompleteFragment = new SupportPlaceAutocompleteFragment();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.place_autocomplete_fragment, autocompleteFragment);
+        ft.replace(binding.fragmentPlaceAutocomplete.getId(), autocompleteFragment);
         ft.commit();
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -614,25 +614,29 @@ public class MapsFragment
         binding.tvSearch1.setText(markerCount + "");
         binding.tvSearch3.setText(personCount + "");
 
-        if(markerCount==personCount) {
-            binding.llBottom.setBackgroundResource(R.color.appMainColor);
-            binding.tvSearch.setTextColor(getResources().getColor(R.color.colorWhite));
-            binding.tvSearch1.setTextColor(getResources().getColor(R.color.colorWhite));
-            binding.tvSearch2.setTextColor(getResources().getColor(R.color.colorWhite));
-            binding.tvSearch3.setTextColor(getResources().getColor(R.color.colorWhite));
+        if(markerCount == personCount) {
+            if (getActivity() != null && isAdded()) {
+                binding.llBottom.setBackgroundResource(R.color.appMainColor);
+                binding.tvSearch.setTextColor(getResources().getColor(R.color.colorWhite));
+                binding.tvSearch1.setTextColor(getResources().getColor(R.color.colorWhite));
+                binding.tvSearch2.setTextColor(getResources().getColor(R.color.colorWhite));
+                binding.tvSearch3.setTextColor(getResources().getColor(R.color.colorWhite));
 
-            binding.llBottom.setClickable(true);
-            binding.llBottom.setFocusable(true);
+                binding.llBottom.setClickable(true);
+                binding.llBottom.setFocusable(true);
+            }
         }
         else {
-            binding.llBottom.setBackgroundResource(R.color.grayButtonEdge);
-            binding.tvSearch.setTextColor(getResources().getColor(R.color.grayButtonText));
-            binding.tvSearch1.setTextColor(getResources().getColor(R.color.grayButtonText));
-            binding.tvSearch2.setTextColor(getResources().getColor(R.color.grayButtonText));
-            binding.tvSearch3.setTextColor(getResources().getColor(R.color.grayButtonText));
+            if (getActivity() != null && isAdded()) {
+                binding.llBottom.setBackgroundResource(R.color.grayButtonEdge);
+                binding.tvSearch.setTextColor(getResources().getColor(R.color.grayButtonText));
+                binding.tvSearch1.setTextColor(getResources().getColor(R.color.grayButtonText));
+                binding.tvSearch2.setTextColor(getResources().getColor(R.color.grayButtonText));
+                binding.tvSearch3.setTextColor(getResources().getColor(R.color.grayButtonText));
 
-            binding.llBottom.setClickable(false);
-            binding.llBottom.setFocusable(false);
+                binding.llBottom.setClickable(false);
+                binding.llBottom.setFocusable(false);
+            }
         }
     }
 
