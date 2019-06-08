@@ -60,6 +60,7 @@ public class SocketCommunication {
     }
 
     public void sendSwitchRoom(int room){
+        Log.v("switchRoom",room+"");
         mSocket.emit("switchRoom",room) ;
     }
 
@@ -124,24 +125,6 @@ public class SocketCommunication {
             }
         }
     };
-
-
-    /*
-    Handler handler = new Handler(){
-        public void handleMessage(Message msg){
-            // 원래 하려던 동작 (UI변경 작업 등)
-
-            if(user.equals(me)) {
-                adapter.addItem(user, message, Messages.MESSAGE_ME);
-                adapter.notifyDataSetChanged();
-            }
-            else {
-                adapter.addItem(user, message, Messages.MESSAGE_OTHER);
-                adapter.notifyDataSetChanged();
-            }
-        }
-    };
-    */
 
     // String 형식
     private Emitter.Listener onUpdateReceived = new Emitter.Listener() {

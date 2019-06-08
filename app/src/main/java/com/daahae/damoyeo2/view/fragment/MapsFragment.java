@@ -1,6 +1,7 @@
 package com.daahae.damoyeo2.view.fragment;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +29,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.TimePicker;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.communication.RetrofitCommunication;
@@ -35,11 +38,14 @@ import com.daahae.damoyeo2.databinding.FragmentMapsBinding;
 import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
+import com.daahae.damoyeo2.model.UserArr;
+import com.daahae.damoyeo2.model.UserObject;
 import com.daahae.damoyeo2.model.UserPos;
 import com.daahae.damoyeo2.presenter.MapsPresenter;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.activity.ChattingActivity;
 import com.daahae.damoyeo2.view.function.GPSInfo;
+import com.daahae.damoyeo2.view_model.ChattingListModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -98,6 +104,8 @@ public class MapsFragment
     private static ArrayList<String> emails;
     private static ArrayList<String> names;
 
+    private Dialog dialog;
+
     public MapsFragment() {
 
     }
@@ -132,6 +140,7 @@ public class MapsFragment
             getActivity().setResult(Constant.LOG_OUT);
             getActivity().finish();
         }
+
     }
 
     @Override
@@ -143,7 +152,27 @@ public class MapsFragment
         initAnimation();
         initListener();
 
+        connectRetrofit();
         return binding.getRoot();
+    }
+
+    private void connectRetrofit(){
+        RetrofitCommunication.DetailChattingRoomCallBack detailChattingRoomCallBack = new RetrofitCommunication.DetailChattingRoomCallBack() {
+            @Override
+            public void detailChattingRoomDataPath(UserArr userArr) {
+
+                if(userArr.getMidFlag().equals("1")){
+
+                    presenter.sendToServer();
+                }
+                //txtPeopleTotal.setText(userArr.getCount()+"");
+                for(int i=0;i<userArr.getUserArrayList().get(0).size();i++) {
+                    //emails.add(userArr.getUserArrayList().get(0).get(i).email);
+                    //names.add(userArr.getUserArrayList().get(0).get(i).nickname);
+                }
+            }
+        };
+        RetrofitCommunication.getInstance().setDetailChattingRoomCallBack(detailChattingRoomCallBack);
     }
 
     private void initView() {
@@ -290,6 +319,7 @@ public class MapsFragment
         } else if (v.getId() == binding.llBottom.getId()) {
             isSend = false;
             setAddressToPerson();
+
             presenter.sendToServer();
         }
     }
@@ -364,7 +394,7 @@ public class MapsFragment
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
+                .enableAutoManage(getActivity(), 0,this)
                 .build();
         googleApiClient.connect();
     }
@@ -639,6 +669,20 @@ public class MapsFragment
             }
         }
     }
+    private String findUser(String email){
+
+        ArrayList<UserObject> userObjects = ChattingListModel.users;
+
+        email = email.replaceAll(" ","");
+        Log.v("email",email);
+        for(int j=0;j<userObjects.size();j++){
+            if(email.trim().equals(userObjects.get(j).email)) {
+                return userObjects.get(j).nickname;
+            }
+        }
+        return null;
+    }
+
 
     private Handler handler = new Handler() {
         @Override
@@ -652,7 +696,7 @@ public class MapsFragment
                     for (String email:emails) {
                         for(UserPos userPos: UserPos.getInstance()) {
                             if (email.trim().equals(userPos.getEmail())){
-                                Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
+                                Person.getInstance().add(new Person(findUser(userPos.getEmail()),userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
                                 break;
                             }
                         }

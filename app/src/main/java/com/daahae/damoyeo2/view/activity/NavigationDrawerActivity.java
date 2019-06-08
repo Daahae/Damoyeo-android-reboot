@@ -8,9 +8,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.daahae.damoyeo2.R;
 import com.daahae.damoyeo2.databinding.ActivityNavigationDrawerBinding;
+import com.daahae.damoyeo2.navigator.LoadingNavigator;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.fragment.MapsFragment;
 import com.daahae.damoyeo2.view.fragment.ResultFragment;
@@ -23,7 +25,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     private static final String TAG = "NAVIGATION_ACTIVITY";
 
-    private ActivityNavigationDrawerBinding binding;
+    private static ActivityNavigationDrawerBinding binding;
 
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
@@ -31,6 +33,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String roomTitle;
     private ArrayList<String> roomEmails;
 
+    private LoadingNavigator loadingNavigator;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         binding.btnBack.setOnClickListener(onClickListener);
 
         setFragmentInitialization();
+
+        loadingNavigator = ResultFragment.getInstance(roomTitle);
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -67,6 +72,10 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     }
 
+    public static ImageButton setButton() {
+        return binding.btnBack;
+    }
+
     public void setFragmentInitialization(){
 
         fragmentManager = getSupportFragmentManager();
@@ -80,6 +89,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().remove(fragment).commit();
         fragmentManager.popBackStack();
+
+        loadingNavigator.stopLoading();
     }
 
     private void setViewFragment(Fragment fragment){
@@ -99,7 +110,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 break;
 
             case Constant.RESULT_PAGE:
-                setViewFragment(ResultFragment.newInstance());
+                setViewFragment(ResultFragment.getInstance(roomTitle));
                 break;
         }
     }

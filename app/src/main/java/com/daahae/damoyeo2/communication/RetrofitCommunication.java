@@ -23,6 +23,8 @@ import com.daahae.damoyeo2.model.FriendAcceptMessage;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.RequestForm;
+import com.daahae.damoyeo2.model.ScheduleArr;
+import com.daahae.damoyeo2.model.ScheduleRequest;
 import com.daahae.damoyeo2.model.UserArr;
 import com.daahae.damoyeo2.model.UserLoginInfo;
 import com.daahae.damoyeo2.model.UserPos;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,6 +64,7 @@ public class RetrofitCommunication {
     private LoginCheck loginCheck;
     private FriendAcceptMessage friendAcceptMessage;
     private UserArr userArr;
+    private ScheduleArr scheduleArr;
 
     private UserCallBack userCallBack;
     private BuildingCallBack buildingCallBack;
@@ -71,6 +75,7 @@ public class RetrofitCommunication {
     private ChattingRoomListCallBack chattingRoomListCallBack;
     private AddFriendCallBack addFriendCallBack;
     private DetailChattingRoomCallBack detailChattingRoomCallBack;
+    private ScheduleCallBack scheduleCallBack;
 
     private static RetrofitCommunication instance = new RetrofitCommunication();
 
@@ -107,9 +112,12 @@ public class RetrofitCommunication {
         void chattingRoomListDataPath(ChattingRoomArr chattingRoomArr);
     }
 
-
     public interface DetailChattingRoomCallBack {
         void detailChattingRoomDataPath(UserArr userArr);
+    }
+
+    public interface ScheduleCallBack {
+        void scheduleDataPath(ScheduleArr scheduleArr);
     }
 
     public interface UserLandmarkBack {
@@ -149,6 +157,9 @@ public class RetrofitCommunication {
     public void setDetailChattingRoomCallBack(DetailChattingRoomCallBack detailChattingRoomCallBack){
         this.detailChattingRoomCallBack = detailChattingRoomCallBack;
     }
+    public void setScheduleArrCallBack(ScheduleCallBack scheduleCallBack){
+        this.scheduleCallBack = scheduleCallBack;
+    }
     private void init() {
         retrofitService = retrofit.create(RetrofitService.class);
         totalTimes = new ArrayList<>();
@@ -156,9 +167,9 @@ public class RetrofitCommunication {
 
     private void connectServer(){
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(300, TimeUnit.SECONDS)
+                .writeTimeout(300, TimeUnit.SECONDS)
                 .build();
 
         retrofit = new Retrofit
@@ -205,7 +216,7 @@ public class RetrofitCommunication {
 
             @Override
             public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
-                Log.e(TAG, "enqueue fail" + t.getMessage());
+                Log.e(TAG, "enqueue fail " + t.getMessage());
                 handler.sendEmptyMessage(Constant.REQUEST_LOCATION_SYNC_FAIL);
             }
         });
@@ -523,9 +534,41 @@ public class RetrofitCommunication {
             }
         });
     }
+    private void sendScheduleRequest(ScheduleRequest request){
+        String message = request.toString();
+        Log.v("메시지 ScheduleRequest",message+"");
+
+        final Call<JsonObject> comment = retrofitService.getScheduleResult(message);
+        comment.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Log.v("알림", response.toString());
+                    Log.v("전체", response.body().toString());
+                    //JsonObject json = response.body();
+                    String json = response.body().toString();
+                    json = reformStringToJson(json);
+                    scheduleArr = new Gson().fromJson(json, ScheduleArr.class);
+                    if(scheduleCallBack!=null) scheduleCallBack.scheduleDataPath(scheduleArr);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
+                Log.e("retrofit","스케줄 통신 실패");
+            }
+        });
+    }
 
     public void sendLoginInformation(){
         sendUserLoginInformation(UserLoginInfo.getInstance());
+    }
+
+    private String reformStringToJson(String str){
+        String strSpilt = str.substring(61,str.length()-3);
+        strSpilt = strSpilt.replace("\\","");
+        Log.v("strSpilt",strSpilt);
+        return strSpilt;
     }
 
     private String makeForm(ArrayList<Person> persons){
@@ -536,6 +579,7 @@ public class RetrofitCommunication {
                 strMessage += ",";
         }
         strMessage+="]}";
+        //,\"meetingTime\":"+Constant.MEETING_TIME+"}";
         return strMessage;
     }
 
@@ -572,6 +616,13 @@ public class RetrofitCommunication {
         RequestForm request = new RequestForm();
         request.setEmail(Constant.email);
         sendRoomListRequest(request);
+    }
+
+    public void setScheduleRequest(){
+        ScheduleRequest request = new ScheduleRequest();
+        request.setRoomNumber(Constant.CURRENT_ROOM_NUMBER);
+        Log.v("스케줄",Constant.CURRENT_ROOM_NUMBER+"");
+        sendScheduleRequest(request);
     }
 
     public void sendFriendsListRequest(){

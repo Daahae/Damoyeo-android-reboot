@@ -15,6 +15,11 @@
     <color name="grayBoxEdge">#BFBFBF</color>
     <color name="grayButtonText">#A6A6A6</color>
 
+    <!--schedule color-->
+    <color name="first_schedule">#58C9D9</color>
+    <color name="second_schedule">#519D9E</color>
+    <color name="third_schedule">#D1B6E1</color>
+
     <!--chatting color-->
 
     <color name="chattingBackground">#EDF7F5</color>

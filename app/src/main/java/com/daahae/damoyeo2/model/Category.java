@@ -39,7 +39,7 @@ public class Category {
     public String toString() {
         return "{" +
                 "\"email\":\"" + Constant.email +"\","
-                +"\"mostLike\":" + moreLike +","
+                +"\"mostLike\":" + mostLike +","
                 +"\"moreLike\":" + moreLike +","
                 +"\"like\":" + like +"}";
     }

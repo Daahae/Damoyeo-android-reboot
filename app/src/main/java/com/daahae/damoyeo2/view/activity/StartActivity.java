@@ -137,6 +137,7 @@ public class StartActivity extends AppCompatActivity implements StartNavigator{
 
         // auto login
         account = GoogleSignIn.getLastSignedInAccount(this);
+
         if(account!=null){
             Log.v("account",account.getEmail());
             firebaseAuthWithGoogle(account);

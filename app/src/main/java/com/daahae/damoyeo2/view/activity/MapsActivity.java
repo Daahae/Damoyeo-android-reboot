@@ -37,10 +37,12 @@ import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.Person;
 import com.daahae.damoyeo2.model.Position;
 import com.daahae.damoyeo2.model.UserArr;
+import com.daahae.damoyeo2.model.UserObject;
 import com.daahae.damoyeo2.model.UserPos;
 import com.daahae.damoyeo2.presenter.MapsPresenter;
 import com.daahae.damoyeo2.view.Constant;
 import com.daahae.damoyeo2.view.function.GPSInfo;
+import com.daahae.damoyeo2.view_model.ChattingListModel;
 import com.daahae.damoyeo2.view_model.ChattingRoomViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -150,12 +152,18 @@ public class MapsActivity
         txtTitle.setText(title);
 
         connectRetrofit();
+
+        countMarker();
     }
 
     private void connectRetrofit(){
         RetrofitCommunication.DetailChattingRoomCallBack detailChattingRoomCallBack = new RetrofitCommunication.DetailChattingRoomCallBack() {
             @Override
             public void detailChattingRoomDataPath(UserArr userArr) {
+
+                if(userArr.getMidFlag().equals("1")){
+                    presenter.sendToServer();
+                }
                 //txtPeopleTotal.setText(userArr.getCount()+"");
                 for(int i=0;i<userArr.getUserArrayList().get(0).size();i++) {
                     //emails.add(userArr.getUserArrayList().get(0).get(i).email);
@@ -709,6 +717,20 @@ public class MapsActivity
         }
     }
 
+    private String findUser(String email){
+
+        ArrayList<UserObject> userObjects = ChattingListModel.users;
+
+        email = email.replaceAll(" ","");
+        Log.v("email",email);
+        for(int j=0;j<userObjects.size();j++){
+            if(email.trim().equals(userObjects.get(j).email)) {
+                return userObjects.get(j).nickname;
+            }
+        }
+        return null;
+    }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -720,7 +742,7 @@ public class MapsActivity
                     for (String email:emails) {
                         for(UserPos userPos: UserPos.getInstance()) {
                             if (email.trim().equals(userPos.getEmail())){
-                                Person.getInstance().add(new Person(userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
+                                Person.getInstance().add(new Person(findUser(userPos.getEmail()),userPos.getEmail(), userPos.getAddress(), new Position(userPos.getStartLat(), userPos.getStartLng())));
                                 break;
                             }
                         }
