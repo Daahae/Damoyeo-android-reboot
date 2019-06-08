@@ -42,7 +42,6 @@ public class InterestActivity extends AppCompatActivity implements UserNavigator
     public void swapActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        this.finish();
     }
 
     @Override

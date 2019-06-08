@@ -19,7 +19,7 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
 
     public InterestViewModel(UserNavigator navigator) {
         this.navigator = navigator;
-        category = new int[4][3];
+        category = new int[3][3];
         isSelected = new boolean[Constant.CATEGORY_MAX];
     }
 
@@ -89,10 +89,6 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
         return -1;
     }
 
-    private int convertCategoryPart(int categoryPart){
-        return categoryPart/100 - 2;
-    }
-
     private void setClickedBox(int i){
         isSelected[i] = true;
         notifyChange();
@@ -101,14 +97,14 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
     public View.OnClickListener selectSportsListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.PLAY),Constant.SPORTS)!=-1) {
+            if(setCategoryArray(1,Constant.SPORTS)!=-1) {
                 setClickedBox(Constant.SPORTS);
             }
         }
     }; public View.OnClickListener selectKaraokeListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.PLAY),Constant.KARAOKE)!=-1) {
+            if(setCategoryArray(1,Constant.KARAOKE)!=-1) {
                 setClickedBox(Constant.KARAOKE);
             }
 
@@ -116,7 +112,7 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
     };public View.OnClickListener selectTheaterListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.PLAY),Constant.THEATER)!=-1) {
+            if(setCategoryArray(1,Constant.THEATER)!=-1) {
                 setClickedBox(Constant.THEATER);
             }
 
@@ -124,7 +120,7 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
     };public View.OnClickListener selectArcadeListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.PLAY),Constant.ARCADE)!=-1) {
+            if(setCategoryArray(1,Constant.ARCADE)!=-1) {
                 setClickedBox(Constant.ARCADE);
             }
 
@@ -132,31 +128,31 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
     };public View.OnClickListener selectParkListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.PLAY),Constant.PARK)!=-1) {
-                setClickedBox(Constant.PARK);
+            if(setCategoryArray(1,Constant.AMUSEMENTPARK)!=-1) {
+                setClickedBox(Constant.AMUSEMENTPARK);
             }
 
         }
     };public View.OnClickListener selectPCRoomListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.PLAY),Constant.PCROOM)!=-1) {
-                setClickedBox(Constant.PCROOM);
+            if(setCategoryArray(1,Constant.PC_ROOM)!=-1) {
+                setClickedBox(Constant.PC_ROOM);
             }
 
         }
-    };public View.OnClickListener selectPlayEtcListener = new View.OnClickListener(){
+    };public View.OnClickListener selectCafeListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.PLAY),Constant.PLAY_ETC)!=-1) {
-                setClickedBox(Constant.PLAY_ETC);
+            if(setCategoryArray(1,Constant.CAFES)!=-1) {
+                setClickedBox(Constant.CAFES);
             }
 
         }
     };public View.OnClickListener selectBistroListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.DRINK),Constant.BISTRO)!=-1) {
+            if(setCategoryArray(2,Constant.BISTRO)!=-1) {
                 setClickedBox(Constant.BISTRO);
             }
 
@@ -164,70 +160,47 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
     };public View.OnClickListener selectBarListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.DRINK),Constant.BAR)!=-1) {
+            if(setCategoryArray(2,Constant.BAR)!=-1) {
                 setClickedBox(Constant.BAR);
             }
 
         }
-    };public View.OnClickListener selectClubListener = new View.OnClickListener(){
+    };public View.OnClickListener selectIsakayaListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.DRINK),Constant.CLUB)!=-1) {
-                setClickedBox(Constant.CLUB);
+            if(setCategoryArray(2,Constant.ISAKAYA)!=-1) {
+                setClickedBox(Constant.ISAKAYA);
             }
 
         }
-    };public View.OnClickListener selectDrinkEtcListener = new View.OnClickListener(){
+    };public View.OnClickListener selectRoomDrinkEtcListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.DRINK),Constant.DRINK_ETC)!=-1) {
-                setClickedBox(Constant.DRINK_ETC);
+            if(setCategoryArray(2,Constant.ROOM_DRINK)!=-1) {
+                setClickedBox(Constant.ROOM_DRINK);
             }
 
         }
-    };public View.OnClickListener selectDepartmentListener = new View.OnClickListener(){
+    };public View.OnClickListener selectDrinkListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.SHOPPING),Constant.DEPARTMENT)!=-1) {
-                setClickedBox(Constant.DEPARTMENT);
+            if(setCategoryArray(2,Constant.DRINK)!=-1) {
+                setClickedBox(Constant.DRINK);
             }
 
         }
-    };public View.OnClickListener selectSupermarketListener = new View.OnClickListener(){
+    };
+    public View.OnClickListener selectKoreanFoodListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.SHOPPING),Constant.SUPERMARKET)!=-1) {
-                setClickedBox(Constant.SUPERMARKET);
-            }
-
-        }
-    };public View.OnClickListener selectMarketplaceListener = new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.SHOPPING),Constant.MARKETPLACE)!=-1) {
-                setClickedBox(Constant.MARKETPLACE);
-            }
-
-        }
-    };public View.OnClickListener selectShoppingEtcListener = new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.SHOPPING),Constant.SHOPPING_ETC)!=-1) {
-                setClickedBox(Constant.SHOPPING_ETC);
-            }
-
-        }
-    };public View.OnClickListener selectKoreanFoodListener = new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.FOOD),Constant.KOREAN_FOOD)!=-1) {
+            if(setCategoryArray(0,Constant.KOREAN_FOOD)!=-1) {
                 setClickedBox(Constant.KOREAN_FOOD);
             }
         }
     };public View.OnClickListener selectJapaneseFoodListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.FOOD),Constant.JAPANESE_FOOD)!=-1) {
+            if(setCategoryArray(0,Constant.JAPANESE_FOOD)!=-1) {
                 setClickedBox(Constant.JAPANESE_FOOD);
             }
 
@@ -235,7 +208,7 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
     };public View.OnClickListener selectChineseFoodListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.FOOD),Constant.CHINESE_FOOD)!=-1) {
+            if(setCategoryArray(0,Constant.CHINESE_FOOD)!=-1) {
                 setClickedBox(Constant.CHINESE_FOOD);
             }
 
@@ -243,17 +216,10 @@ public class InterestViewModel extends BaseObservable implements BaseViewModel {
     };public View.OnClickListener selectWesternFoodListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.FOOD),Constant.WESTERN_FOOD)!=-1) {
+            if(setCategoryArray(0,Constant.WESTERN_FOOD)!=-1) {
                 setClickedBox(Constant.WESTERN_FOOD);
             }
 
-        }
-    };public View.OnClickListener selectFoodEtcListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if(setCategoryArray(convertCategoryPart(Constant.FOOD),Constant.FOOD_ETC)!=-1) {
-                setClickedBox(Constant.FOOD_ETC);
-            }
         }
     };
 

@@ -69,7 +69,7 @@ import java.util.ArrayList;
 public class CategoryActivity
         extends AppCompatActivity
         implements View.OnClickListener, View.OnTouchListener, AdapterView.OnItemClickListener, SlidingDrawer.OnDrawerOpenListener, SlidingDrawer.OnDrawerCloseListener,
-                    OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private CategoryPresenter presenter;
 
@@ -139,7 +139,7 @@ public class CategoryActivity
         initView();
         initListener();
 
-        setLoadingAnimation();
+        //setLoadingAnimation();
 
         setMarkerTimeList(markerTimeAdapter);
         listMarkerTime.setAdapter(markerTimeAdapter);

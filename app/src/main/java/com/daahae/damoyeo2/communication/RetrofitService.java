@@ -3,6 +3,8 @@ package com.daahae.damoyeo2.communication;
 import com.daahae.damoyeo2.model.Friend;
 import com.google.gson.JsonObject;
 
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -77,4 +79,14 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("detailChatRoom")
     Call<JsonObject> getChattingRoomInformation(@Field("chatRoom") String request);
+
+
+    /**
+     * Schedule List Function
+     */
+
+    //@Multipart
+    @FormUrlEncoded
+    @POST("scheduleResult")
+    Call<JsonObject> getScheduleResult(@Field("schedule") String request);
 }

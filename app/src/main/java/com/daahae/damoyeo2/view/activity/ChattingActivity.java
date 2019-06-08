@@ -42,14 +42,8 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
     private JSONObject msg;
     private JSONArray json;
 
-    /*
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("roomTitle",title);
-        startActivity(intent);
-    }
-    */
+    SocketCommunication socket;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +51,8 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
 
         Intent intent = getIntent();
         title = intent.getStringExtra("roomTitle");
+
+        socket = new SocketCommunication();
 
         initView();
 
@@ -66,8 +62,49 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
         adapter.notifyDataSetChanged();
         listMessage.setAdapter(adapter);
 
-        SocketCommunication.getInstance().sendSwitchRoom(Constant.CURRENT_ROOM_NUMBER);
+        getMessage();
+    }
 
+    private void getMessage(){
+        //SocketCommunication.getInstance().sendSwitchRoom(Constant.CURRENT_ROOM_NUMBER);
+        socket.sendSwitchRoom(Constant.CURRENT_ROOM_NUMBER);
+
+        socket.setChattingCallBack(new SocketCommunication.ChattingCallBack() {
+            @Override
+            public void broadcastingMessage(String name, String message) {
+
+                Log.v("json","msg");
+                if(name.equals("msg")) {
+
+                    adapter.clearAll();
+
+                    try {
+                        json = new JSONArray(message);
+
+                        for (int i = 0; i < json.length(); i++) {
+                            msg = json.getJSONObject(i);
+
+                            if (msg.getString("userNickName").trim().equals(Constant.nickname)) {
+                                addMessage(msg.getString("userNickName"), msg.getString("msg"), Messages.MESSAGE_ME);
+                                Log.v("json nickname", msg.getString("userNickName"));
+                                Log.v("json msg", msg.getString("msg"));
+                            } else {
+                                addMessage(msg.getString("userNickName"), msg.getString("msg"), Messages.MESSAGE_OTHER);
+
+                            }
+                        }
+
+
+                        Message msg = handler.obtainMessage();
+                        handler.sendMessage(msg);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        /*
         SocketCommunication.ChattingCallBack chattingCallBack = new SocketCommunication.ChattingCallBack() {
             @Override
             public void broadcastingMessage(String name, String message) {
@@ -104,6 +141,7 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
             }
         };
         SocketCommunication.getInstance().setChattingCallBack(chattingCallBack);
+        */
     }
 
 
@@ -114,6 +152,8 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
 
             adapter.notifyDataSetChanged();
             listMessage.setAdapter(adapter);
+
+            listMessage.setSelection(adapter.getCount()-1);
         }
     };
 
@@ -152,10 +192,11 @@ public class ChattingActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.btn_send_chatting:
                 if(!editText.getText().toString().equals("")){
-                    chattingViewModel.sendChatting(editText.getText().toString());
+                    socket.sendChatting(editText.getText().toString());
+                    //SocketCommunication.getInstance().sendChatting(editText.getText().toString());
                     addMessage(Constant.nickname,editText.getText().toString(),Messages.MESSAGE_ME);
                     editText.setText("");
-                    listMessage.setSelection(adapter.getCount()-1);
+                    getMessage();
                 }
                 break;
         }

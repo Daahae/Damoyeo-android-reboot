@@ -26,6 +26,7 @@ public class UserPos {
         this.startLng = startLng;
     }
 
+
     public static synchronized ArrayList<UserPos> getInstance() {
         return instance;
     }

@@ -20,7 +20,7 @@
             android:layout_height="@dimen/basic_height"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/basic_margin"
-            android:text="#tag"
+            android:text="#한식 #카페 #PC방"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -46,27 +46,12 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <View
-                android:layout_width="5dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
-                android:layout_marginRight="10dp"
-                android:background="@color/appMainColor"/>
-
             <LinearLayout
                 android:id="@+id/linear_contents_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="20dp"
                 android:orientation="vertical"/>
-        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
 

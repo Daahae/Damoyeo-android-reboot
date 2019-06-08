@@ -26,7 +26,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".view.activity.NavigationDrawerActivity" />
         <activity android:name=".view.activity.ChattingActivity" />
-        <activity android:name=".view.activity.ScheduleActivity" />
+        <activity android:name=".view.activity.ScheduleActivity" >
+        </activity>
         <activity
             android:name=".view.activity.MainActivity"
             android:label="@string/title_activity_main2" /> <!-- Bitmap too large to be uploaded into a texture -->
@@ -55,6 +56,8 @@
             android:name=".view.activity.DetailActivity"
             android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".view.activity.StartActivity">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />

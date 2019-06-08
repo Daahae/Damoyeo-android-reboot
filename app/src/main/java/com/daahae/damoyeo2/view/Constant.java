@@ -45,33 +45,24 @@ public class Constant {
     public static final int RESULT_PAGE = 105;
 
     // Category
-    public static final int PLAY = 200;
-    public static final int SPORTS = 201;
-    public static final int KARAOKE = 202;
-    public static final int THEATER = 203;
-    public static final int ARCADE = 204;
-    public static final int PARK = 205;
-    public static final int PCROOM = 206;
-    public static final int PLAY_ETC = 207;
+    public static final int KOREAN_FOOD = 200;
+    public static final int WESTERN_FOOD = 201;
+    public static final int JAPANESE_FOOD = 202;
+    public static final int CHINESE_FOOD = 203;
 
-    public static final int DRINK = 300;
-    public static final int BISTRO = 301;
-    public static final int BAR = 302;
-    public static final int CLUB = 303;
-    public static final int DRINK_ETC = 304;
+    public static final int SPORTS = 300;
+    public static final int KARAOKE = 301;
+    public static final int THEATER = 302;
+    public static final int ARCADE = 303;
+    public static final int AMUSEMENTPARK = 304;
+    public static final int PC_ROOM = 305;
+    public static final int CAFES= 306;
 
-    public static final int SHOPPING = 400;
-    public static final int DEPARTMENT = 401;
-    public static final int SUPERMARKET = 402;
-    public static final int MARKETPLACE = 403;
-    public static final int SHOPPING_ETC = 404;
-
-    public static final int FOOD = 500;
-    public static final int KOREAN_FOOD = 501;
-    public static final int JAPANESE_FOOD = 502;
-    public static final int CHINESE_FOOD = 503;
-    public static final int WESTERN_FOOD = 504;
-    public static final int FOOD_ETC = 505;
+    public static final int BISTRO = 500;
+    public static final int BAR = 501;
+    public static final int ISAKAYA = 502;
+    public static final int ROOM_DRINK = 503;
+    public static final int DRINK = 504;
 
     public static final int CATEGORY_MAX = 1000;
 
@@ -122,4 +113,8 @@ public class Constant {
 
     public static int CURRENT_ROOM_NUMBER = 0;
     public static int ROOM_COUNT = 0;
+
+    public static int MEETING_TIME=0;
+
+    //public static boolean
 }

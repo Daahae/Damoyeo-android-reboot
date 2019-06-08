@@ -22,6 +22,8 @@ public class ChattingListModel {
     private ArrayList<String> emails;
     private ArrayList<String> names;
 
+    public static ArrayList<UserObject> users = new ArrayList<>();
+
     public ChattingListModel() {
     }
 
@@ -104,6 +106,7 @@ public class ChattingListModel {
 
     public ArrayList<ChattingListModel> getArrayListChattingList(ChattingRoomArr chattingRoomArr){
         ArrayList<ChattingListModel> chattingListModelArrayList = new ArrayList<>();
+        users = chattingRoomArr.getUserObjects();
         for(int i=0;i<chattingRoomArr.getChattingRooms().size();i++){
             ChattingListModel chattingListModel = new ChattingListModel(chattingRoomArr.getChattingRooms().get(i), chattingRoomArr.getUserObjects());
             chattingListModelArrayList.add(chattingListModel);

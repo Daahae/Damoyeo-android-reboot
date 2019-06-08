@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,20 +26,30 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SlidingDrawer;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daahae.damoyeo2.R;
+import com.daahae.damoyeo2.communication.RetrofitCommunication;
 import com.daahae.damoyeo2.databinding.FragmentResultBinding;
-import com.daahae.damoyeo2.model.BuildingArr;
+import com.daahae.damoyeo2.model.FloatingActionBtn;
 import com.daahae.damoyeo2.model.MidInfo;
 import com.daahae.damoyeo2.model.Person;
+import com.daahae.damoyeo2.model.ScheduleArr;
+import com.daahae.damoyeo2.model.SimpleSchedule;
+import com.daahae.damoyeo2.navigator.LoadingNavigator;
 import com.daahae.damoyeo2.presenter.CategoryPresenter;
 import com.daahae.damoyeo2.view.Constant;
+import com.daahae.damoyeo2.view.activity.ChattingActivity;
 import com.daahae.damoyeo2.view.activity.DirectionActivity;
-import com.daahae.damoyeo2.view.adapter.BuildingAdapter;
+import com.daahae.damoyeo2.view.activity.NavigationDrawerActivity;
+import com.daahae.damoyeo2.view.activity.ScheduleActivity;
 import com.daahae.damoyeo2.view.adapter.MarkerTimeAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -55,12 +67,15 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class ResultFragment
         extends Fragment
         implements View.OnClickListener, View.OnTouchListener, AdapterView.OnItemClickListener, SlidingDrawer.OnDrawerOpenListener, SlidingDrawer.OnDrawerCloseListener,
-        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LoadingNavigator {
+
+    private static final String ARG_PARAM1 = "param1";
 
     private FragmentResultBinding binding;
 
@@ -73,6 +88,14 @@ public class ResultFragment
     private ArrayList<String> totalTimes = null;
 
     private MarkerTimeAdapter markerTimeAdapter;
+    private ArrayList<SimpleSchedule> mItems = new ArrayList();
+    private static ScheduleArr scheduleArr;
+
+    private int count=0;
+    private String title="";
+    private FloatingActionBtn fabtn;
+
+    private static ResultFragment instance = new ResultFragment();
 
     public ListView getListMarkerTime() {
         return binding.lvList;
@@ -90,9 +113,17 @@ public class ResultFragment
 
     }
 
-    public static ResultFragment newInstance() {
+    public static ResultFragment getInstance(String title) {
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, title);
+        instance.setArguments(args);
+        return instance;
+    }
+
+    public static ResultFragment newInstance(String title) {
         ResultFragment fragment = new ResultFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, title);
         fragment.setArguments(args);
         return fragment;
     }
@@ -100,7 +131,10 @@ public class ResultFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new CategoryPresenter(this);
+        if (getArguments() != null) {
+            title = getArguments().getString(ARG_PARAM1);
+        }
+
         markerTimeAdapter = new MarkerTimeAdapter();
     }
 
@@ -118,11 +152,31 @@ public class ResultFragment
     }
 
     private void initView(){
+        presenter = new CategoryPresenter(title);
+
         binding.mapMain.getMapAsync(this);
         setLoadingAnimation();
 
         setMarkerTimeList(markerTimeAdapter);
         binding.lvList.setAdapter(markerTimeAdapter);
+
+        fabtn = new FloatingActionBtn();
+        fabtn.setFabChat(binding.fabChatResult);
+        Log.v("init","initView");
+
+        connectRetrofit();
+
+        NavigationDrawerActivity.setButton().setClickable(false);
+
+    }
+
+
+    private void setData(String[] titles){
+        count=0;
+        Log.v("Add","setData");
+        for(int i=0;i<titles.length;i++) {
+            addSimpleSchedule(titles[i]);
+        }
     }
 
     private void setLoadingAnimation(){
@@ -138,11 +192,108 @@ public class ResultFragment
         binding.lvList.setOnItemClickListener(this);
 
         binding.content.setOnTouchListener(this);
-        binding.btnDown.setOnTouchListener(this);
-        binding.btnDown.setOnClickListener(this);
 
         binding.slide.setOnDrawerCloseListener(this);
         binding.slide.setOnDrawerOpenListener(this);
+        binding.slide.clearAnimation();
+
+        fabtn.getFabChat().setOnClickListener(this);
+    }
+
+    private LinearLayout.LayoutParams setMargin(int width, int height, int left, int top, int right, int bottom){
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+        params.bottomMargin = bottom;
+        params.leftMargin = left;
+        params.rightMargin = right;
+        params.topMargin = top;
+
+        return params;
+    }
+
+    public void setScheduleArr(ScheduleArr scheduleArr) {
+        this.scheduleArr = scheduleArr;
+    }
+
+    public static ScheduleArr getScheduleArr() {
+        return scheduleArr;
+    }
+
+    private void connectRetrofit(){
+
+        final RetrofitCommunication.ScheduleCallBack scheduleCallBack = new RetrofitCommunication.ScheduleCallBack() {
+            @Override
+            public void scheduleDataPath(ScheduleArr scheduleArr) {
+                binding.txtLoading.setVisibility(View.GONE);
+                String[] titles = new String[scheduleArr.getScheduleArr().size()];
+                for(int i=0;i<titles.length;i++) titles[i] = "";
+                for(int i=0;i<scheduleArr.getScheduleArr().size();i++) {
+                    for(int j=0;j<scheduleArr.getScheduleArr().get(0).size();j++){
+                        if(j==scheduleArr.getScheduleArr().get(i).size()-1)
+                            titles[i] += "#" + scheduleArr.getScheduleArr().get(i).get(j).category;
+                        else
+                            titles[i] += "#" + scheduleArr.getScheduleArr().get(i).get(j).category+"\n";
+                    }
+                }
+                setData(titles);
+                setScheduleArr(scheduleArr);
+
+                NavigationDrawerActivity.setButton().setClickable(true);
+            }
+        };
+        RetrofitCommunication.getInstance().setScheduleArrCallBack(scheduleCallBack);
+    }
+
+    private void addSimpleSchedule(String contexts){
+        RelativeLayout relativeLayout = new RelativeLayout(Constant.context);
+        relativeLayout.setLayoutParams(setMargin(400,400,30,30,30,30));
+        relativeLayout.setBackgroundColor(Constant.context.getResources().getColor(R.color.colorWhite));
+        binding.content.addView(relativeLayout);
+
+        final ImageButton imageBack = new ImageButton(Constant.context);
+        imageBack.setLayoutParams(setMargin(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT,0,0,0,0));
+        imageBack.setPadding(0,0,0,0);
+        imageBack.setId(++count);
+        imageBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v("ID",v.getId()+"");
+                Intent intent = new Intent(getContext(), ScheduleActivity.class);
+                intent.putExtra("scheduleNumber",imageBack.getId());
+                startActivity(intent);
+            }
+        });
+
+
+        Random random = new Random();
+        int randomInteger = random.nextInt(5);
+
+        switch (randomInteger){
+            case 0:
+                imageBack.setImageDrawable(Constant.context.getResources().getDrawable(R.drawable.img_schedule1));
+                break;
+            case 1:
+                imageBack.setImageDrawable(Constant.context.getResources().getDrawable(R.drawable.img_schedule2));
+                break;
+            case 2:
+                imageBack.setImageDrawable(Constant.context.getResources().getDrawable(R.drawable.img_schedule3));
+                break;
+            case 3:
+                imageBack.setImageDrawable(Constant.context.getResources().getDrawable(R.drawable.img_schedule4));
+                break;
+            case 4:
+                imageBack.setImageDrawable(Constant.context.getResources().getDrawable(R.drawable.img_schedule5));
+                break;
+        }
+        imageBack.setScaleType(ImageView.ScaleType.FIT_XY);
+        relativeLayout.addView(imageBack);
+
+        TextView txtContents = new TextView(Constant.context);
+        txtContents.setLayoutParams(setMargin(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT,5,5,5,5));
+        txtContents.setGravity(Gravity.CENTER);
+        txtContents.setTextSize(14);
+        txtContents.setText(contexts);
+        txtContents.setTextColor(Color.parseColor("#FFFFFF"));
+        relativeLayout.addView(txtContents);
     }
 
     @Override
@@ -219,13 +370,18 @@ public class ResultFragment
     @Override
     public void onClick(View v) {
 
-        if(v.getId() == binding.btnAll.getId())
+        if(v.getId() == binding.fabChatResult.getId()){
+            Intent intent = new Intent(getActivity(), ChattingActivity.class);
+            intent.putExtra("roomTitle",title);
+            startActivity(intent);
+            Log.v("roomTitle",title);
+        }
+
         switch(v.getId()) {
             case R.id.btn_all_marker_list:
                 showAllMarkers();
                 setCameraState(binding.rlMap);
                 break;
-
             case R.id.btn_down_sliding_drawer_category:
                 binding.slide.animateClose();
                 break;
@@ -260,13 +416,13 @@ public class ResultFragment
 
     @Override
     public void onDrawerClosed() {
-        binding.handle.setVisibility(View.VISIBLE);
+        binding.btnUp.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_up));
         binding.llList.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onDrawerOpened() {
-        binding.handle.setVisibility(View.GONE);
+        binding.btnUp.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_down));
         binding.llList.setVisibility(View.GONE);
     }
 
@@ -330,7 +486,7 @@ public class ResultFragment
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
+                .enableAutoManage(getActivity(), 1,this)
                 .build();
         googleApiClient.connect();
     }
@@ -384,9 +540,10 @@ public class ResultFragment
 
         markerTimeAdapter.resetList();
         if(totalTimes!=null){
-            for(int i=0; i < totalTimes.size();i++) {
+            Log.v("totalTimes",totalTimes.size()+"");
+            for(int i=0; i < Person.getInstance().size();i++) {
                 Log.v("시간", totalTimes.get(i));
-                markerTimeAdapter.add(Person.getInstance().get(i).getName(), totalTimes.get(i));
+                markerTimeAdapter.add(Person.getInstance().get(i).getNickname(), totalTimes.get(i));
             }
         }
     }
@@ -463,5 +620,12 @@ public class ResultFragment
         builder.include(markerOptions.getPosition());
 
         // drawRoute(MidInfo.getInstance().getLatLng(), latLng);
+    }
+
+    @Override
+    public void stopLoading() {
+        binding.ivLoading.setVisibility(View.GONE);
+        binding.ivLoading.clearAnimation();
+        Log.v("Loading","clear");
     }
 }

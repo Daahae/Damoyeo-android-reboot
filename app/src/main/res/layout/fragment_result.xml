@@ -27,7 +27,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:name="com.google.android.gms.maps.MapFragment" />
+
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_chat_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:src="@drawable/ic_chatting_white"
+                    app:backgroundTint="@color/colorWhite"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="15dp"
+                    app:elevation="6dp"/>
             </RelativeLayout>
+
+
 
             <LinearLayout
                 android:id="@+id/ll_list"
@@ -61,11 +76,11 @@
             android:layout_height="match_parent"
             android:allowSingleTap="false"
             android:animateOnClick="true"
-            android:bottomOffset="5dp"
+            android:bottomOffset="0dp"
             android:content="@+id/content"
             android:handle="@+id/handle"
             android:orientation="vertical"
-            android:topOffset="200dp">
+            android:topOffset="400dp">
 
             <LinearLayout
                 android:id="@+id/handle"
@@ -85,11 +100,16 @@
                 <TextView
                     android:id="@+id/tv_selected"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="27dp"
                     android:background="@color/colorWhite"
                     android:gravity="center"
-                    android:textColor="@color/appMainColor"
-                    android:textSize="20sp" />
+                    android:layout_margin="3dp"
+                    android:text="추천 스케줄"
+                    android:drawablePadding="5dp"
+                    android:textAlignment="viewStart"
+                    android:drawableLeft="@drawable/ic_marker"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -97,15 +117,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#FFFFFFFF"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:scrollbars="horizontal">
 
-                <ImageButton
-                    android:id="@+id/btn_down"
+                <TextView
+                    android:id="@+id/txt_loading"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@drawable/top_round_white_box"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_arrow_down" />
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="스케줄을 불러오고 있습니다"/>
+
             </LinearLayout>
         </SlidingDrawer>
 
